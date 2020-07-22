@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java序列化,Externalizable,Serializable," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="what序列化&#x2F;反序列化是什么 Java序列化是把Java Bean转化成有序字节流的过程 Java反序列化是把有序字节流转化成Java Bean的过程  序列化&#x2F;反序列化有什么用 在网络通信过程中，所有的数据，如图片、文本都是以二进制序列的形式传输的。而将这些图片、文本对应的对象转化成二进制序列就是通过序列化实现的   而将网络中的二进制数据流恢复成对象就是通过Java Bean实现的  序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="序列化源码分析">
+<meta property="og:url" content="http://yoursite.com/2020/07/05/%E5%BA%8F%E5%88%97%E5%8C%96%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="gTang94&#39;s note">
+<meta property="og:description" content="what序列化&#x2F;反序列化是什么 Java序列化是把Java Bean转化成有序字节流的过程 Java反序列化是把有序字节流转化成Java Bean的过程  序列化&#x2F;反序列化有什么用 在网络通信过程中，所有的数据，如图片、文本都是以二进制序列的形式传输的。而将这些图片、文本对应的对象转化成二进制序列就是通过序列化实现的   而将网络中的二进制数据流恢复成对象就是通过Java Bean实现的  序列化">
+<meta property="article:published_time" content="2020-07-04T16:50:09.000Z">
+<meta property="article:modified_time" content="2020-07-22T13:48:25.787Z">
+<meta property="article:author" content="gTang94">
+<meta property="article:tag" content="Java序列化">
+<meta property="article:tag" content="Externalizable">
+<meta property="article:tag" content="Serializable">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/07/05/序列化源码分析/"/>
+
+
+
+
+
+  <title>序列化源码分析 | gTang94's note</title>
+  
+
+
+
+
+
+
+
+
+
+	<link href='http://fonts.font.im/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="gTang94's note" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">gTang94's note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">gTang94的技术笔记</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/05/%E5%BA%8F%E5%88%97%E5%8C%96%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="gTang94">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="gTang94's note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">序列化源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-05T00:50:09+08:00">
+                2020-07-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" itemprop="url" rel="index">
+                    <span itemprop="name">源码分析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="what"><a href="#what" class="headerlink" title="what"></a>what</h2><h3 id="序列化-反序列化是什么"><a href="#序列化-反序列化是什么" class="headerlink" title="序列化/反序列化是什么"></a>序列化/反序列化是什么</h3><blockquote>
+<p>Java序列化是把Java Bean转化成有序字节流的过程</p>
+<p>Java反序列化是把有序字节流转化成Java Bean的过程</p>
+</blockquote>
+<h3 id="序列化-反序列化有什么用"><a href="#序列化-反序列化有什么用" class="headerlink" title="序列化/反序列化有什么用"></a>序列化/反序列化有什么用</h3><blockquote>
+<p>在网络通信过程中，所有的数据，如图片、文本都是以二进制序列的形式传输的。而将这些图片、文本对应的对象转化成二进制序列就是通过序列化实现的</p>
+</blockquote>
+<blockquote>
+<p>而将网络中的二进制数据流恢复成对象就是通过Java Bean实现的</p>
+</blockquote>
+<h3 id="序列化用在什么情况下"><a href="#序列化用在什么情况下" class="headerlink" title="序列化用在什么情况下"></a>序列化用在什么情况下</h3><blockquote>
+<ul>
+<li>将对象持久化到硬盘中</li>
+<li>将对象传输到网络中</li>
+<li>进程间的对象传输</li>
+</ul>
+</blockquote>
+<h2 id="序列化-反序列化怎么用"><a href="#序列化-反序列化怎么用" class="headerlink" title="序列化/反序列化怎么用"></a>序列化/反序列化怎么用</h2><blockquote>
+<p>Java的序列化有两种方式：</p>
+<ul>
+<li>实现 Serializable 接口</li>
+<li>实现 Externalizable 接口</li>
+</ul>
+</blockquote>
+<h3 id="实现-Serializable-接口"><a href="#实现-Serializable-接口" class="headerlink" title="实现 Serializable 接口"></a>实现 Serializable 接口</h3><h4 id="默认方式实现序列化"><a href="#默认方式实现序列化" class="headerlink" title="默认方式实现序列化"></a>默认方式实现序列化</h4><blockquote>
+<p>用FileOutputStream类实例化ObjectOutputStream类，然后使用ObjectOutputStream的默认的序列化方式，对非transient变量进行序列化</p>
+</blockquote>
+<blockquote>
+<p>用FileInputStream类实例化ObjectInputStream类，然后使用ObjectInputStream的默认反序列化方式，对非transient变量进行反序列化</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SerialParent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            ObjectOutputStream oss = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">"test.txt"</span>));</span><br><span class="line">            Test test = <span class="keyword">new</span> Test(<span class="number">12</span>);</span><br><span class="line">            oss.writeObject(test);</span><br><span class="line"></span><br><span class="line">            ObjectInputStream iss = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"test.txt"</span>));</span><br><span class="line">            Test itest = (Test) iss.readObject();</span><br><span class="line">            System.out.println(itest.getAge());</span><br><span class="line">           </span><br><span class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Test</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="自定义方式实现序列化"><a href="#自定义方式实现序列化" class="headerlink" title="自定义方式实现序列化"></a>自定义方式实现序列化</h4><h5 id="writeObject-readObject"><a href="#writeObject-readObject" class="headerlink" title="writeObject / readObject"></a>writeObject / readObject</h5><blockquote>
+<p>在实现了Serializable类的子类中重写readObject和writeObject方法，在序列化/反序列化的时候，就会调用该类的readObject和writeObject方法</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SerialParent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            ObjectOutputStream oss = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">"test.txt"</span>));</span><br><span class="line">            Test test = <span class="keyword">new</span> Test(<span class="number">12</span>);</span><br><span class="line">            oss.writeObject(test);</span><br><span class="line"></span><br><span class="line">            ObjectInputStream iss = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"test.txt"</span>));</span><br><span class="line">            Test itest = (Test) iss.readObject();</span><br><span class="line">            System.out.println(itest.toString());</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Test</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeObject</span><span class="params">(java.io.ObjectOutputStream outputStream)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            outputStream.defaultWriteObject();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(java.io.ObjectInputStream inputStream)</span> <span class="keyword">throws</span> IOException,ClassNotFoundException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            inputStream.defaultReadObject();</span><br><span class="line">            age = <span class="number">1000</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Test &#123;"</span> +</span><br><span class="line">                <span class="string">"age = "</span> + age +</span><br><span class="line">                <span class="string">"&#125;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="writeReplace-readResolve"><a href="#writeReplace-readResolve" class="headerlink" title="writeReplace / readResolve"></a>writeReplace / readResolve</h5><blockquote>
+<p>和writeObject/readObject类似，重写writeReplace/readResolve方法也能实现自定义序列化</p>
+<p>但在序列化时，会先调用writeReplace方法，在调用writeObject方法。该方法可将任意对象代替成目标序列化对象</p>
+<p>在反序列化时，readResolve方法会替换反序列化出的对象，反序列出来的方法会别立即丢弃。该方法在readObject之后调用</p>
+</blockquote>
+<h3 id="实现-Externalizable-接口"><a href="#实现-Externalizable-接口" class="headerlink" title="实现 Externalizable 接口"></a>实现 Externalizable 接口</h3><blockquote>
+<p>实现Externalizable接口，并且实现writeExternal方法和readExternal方法，在序列化/反序列化时，会调用这两个方法进行序列化</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SerialParent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            ObjectOutputStream oss = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">"test.txt"</span>));</span><br><span class="line">            Test test = <span class="keyword">new</span> Test(<span class="number">12</span>);</span><br><span class="line">            oss.writeObject(test);</span><br><span class="line"></span><br><span class="line">            ObjectInputStream iss = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"test.txt"</span>));</span><br><span class="line">            Test itest = (Test) iss.readObject();</span><br><span class="line">            System.out.println(itest.toString());</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> <span class="keyword">implements</span> <span class="title">Externalizable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Test</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">        <span class="keyword">this</span>.name = <span class="string">"zhangsan"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Test &#123;"</span> +</span><br><span class="line">                <span class="string">"age = "</span> + age +</span><br><span class="line">                <span class="string">"&#125;"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeExternal</span><span class="params">(ObjectOutput out)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        StringBuffer buff = <span class="keyword">new</span> StringBuffer(<span class="keyword">this</span>.name).reverse();</span><br><span class="line">        out.writeObject(buff);</span><br><span class="line">        out.writeInt(<span class="keyword">this</span>.age);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">readExternal</span><span class="params">(ObjectInput in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = ((StringBuffer)in.readObject()).reverse().toString();</span><br><span class="line">        <span class="keyword">this</span>.age = in.readInt();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><h3 id="标记接口"><a href="#标记接口" class="headerlink" title="标记接口"></a>标记接口</h3><blockquote>
+<p>标记接口并不是Java语言特有的，标记接口是编程中的一种通用的设计思路。</p>
+<p>Java中的标记接口有Serializable、Cloneable等，他们没有实际的方法，只是起到标记类的作用。比如Class A implements Serializable, Cloneable ，只是表示A可以被序列化和克隆。</p>
+<p>在Java运行时，通过 obj instanceof Serializable 判断是否实现这些标记接口，实现则做特殊处理</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>标记接口是编程中的一种设计思路，编程语言本身并不支持为类维护元数据。而标记接口则弥补了这个功能上的缺失：当一个类实现了标记接口时，实际上从某种意义上来说就成为了这个类的元数据之一，在运行时，通过编程语言的反射机制，我们就可以拿到代码中的元数据了</p>
+</blockquote>
+<h3 id="元数据"><a href="#元数据" class="headerlink" title="元数据"></a>元数据</h3><blockquote>
+<p><a href="https://www.oracle.com/technetwork/articles/hunter-meta-097643-zhs.html" target="_blank" rel="noopener">元数据</a>是用来描述数据的数据，也就是描述代码与其他资源(如：DB表)之间内在联系的数据</p>
+<p>例如：富士苹果有一个属性：它是红色的。假定有一个 FujiApple 类，您可以使用 <code>@Color</code> 批注类型的一个批注来指定它的颜色。通过这么做，您就提供了关于苹果的元数据</p>
+</blockquote>
+<blockquote>
+<p>在JDK1.5之前标记接口主要担任元数据的角色(描述代码的字节流联系的数据)，1.5之后注解主要作为元数据的角色</p>
+</blockquote>
+<h3 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h3><blockquote>
+<p>在正常情况下，在使用一个类时，必须先得知道它是做什么的，有什么用，有哪些属性，有哪些方法。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Person person = <span class="keyword">new</span> Person();</span><br><span class="line">person.getAge(<span class="number">20</span>);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>但在某些情况下，在程序运行时才你呢个知道要操作的是什么类，及这个类的方法属性，然后调用它的方法</p>
+<p>在这种情况下，即在运行时操作类的方式就是反射</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class clz = Class.forName(<span class="string">"club.hermit.study.Person"</span>);</span><br><span class="line">Method method = clz.getMethod(<span class="string">"setAge"</span>, <span class="keyword">int</span><span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">Constructor cons = clz.getConstructor();</span><br><span class="line">Object object = cons.newInstance();</span><br><span class="line">method.invoke(object, <span class="number">20</span>);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>上面两个都实现了实例化Person类，已经设置Person类的age属性，但一个是通过正常实例化类的方式，后者是通过发射的方式</p>
+</blockquote>
+<h3 id="序列化原理"><a href="#序列化原理" class="headerlink" title="序列化原理"></a>序列化原理</h3><blockquote>
+<p>在通过ObjectOutputStream实现序列化的过程中，writeObject0方法做以下的事：</p>
+<ol>
+<li>先处理以前写入或不重新写入的对象</li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// handle previously written and non-replaceable objects</span></span><br><span class="line"><span class="keyword">int</span> h;</span><br><span class="line"><span class="keyword">if</span> ((obj = subs.lookup(obj)) == <span class="keyword">null</span>) &#123;</span><br><span class="line">  writeNull();</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!unshared &amp;&amp; (h = handles.lookup(obj)) != -<span class="number">1</span>) &#123;</span><br><span class="line">  writeHandle(h);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Class) &#123;</span><br><span class="line">  writeClass((Class) obj, unshared);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> ObjectStreamClass) &#123;</span><br><span class="line">  writeClassDesc((ObjectStreamClass) obj, unshared);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>判断对象是否为null、对象句柄映射、Class的子类、及待序列化的类是否是序列化类的描述内，根据各自判断直接将结果写入流中</p>
+<p>ObjectStreamClass类是类的序列化描述符，可以通过lookup方法查找或创建JVM中加的的特定类的ObjectStreamClass类。该类中包含了类名和序列化ID(serialVersionUID)</p>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>检查是否需要更换对象</li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// check for replacement object</span></span><br><span class="line">Object orig = obj;</span><br><span class="line">Class&lt;?&gt; cl = obj.getClass();</span><br><span class="line">ObjectStreamClass desc;</span><br><span class="line"><span class="keyword">for</span> (;;) &#123;</span><br><span class="line">  <span class="comment">// REMIND: skip this check for strings/arrays?</span></span><br><span class="line">  Class&lt;?&gt; repCl;</span><br><span class="line">  desc = ObjectStreamClass.lookup(cl, <span class="keyword">true</span>);</span><br><span class="line">  <span class="keyword">if</span> (!desc.hasWriteReplaceMethod() ||</span><br><span class="line">      (obj = desc.invokeWriteReplace(obj)) == <span class="keyword">null</span> ||</span><br><span class="line">      (repCl = obj.getClass()) == cl)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  cl = repCl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (enableReplace) &#123;</span><br><span class="line">  Object rep = replaceObject(obj);</span><br><span class="line">  <span class="keyword">if</span> (rep != obj &amp;&amp; rep != <span class="keyword">null</span>) &#123;</span><br><span class="line">    cl = rep.getClass();</span><br><span class="line">    desc = ObjectStreamClass.lookup(cl, <span class="keyword">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  obj = rep;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>首先通过反射拿到需序列化的类的类名cl</li>
+<li>然后通过第一步说的lookup方法查找JVM中加载的cl类对应的ObjectStreamClass描述符</li>
+<li>如果需序列化的类中定义了writeReplace方法，则会反射执行该writeReplace方法</li>
+</ul>
+<p>注：该处的 if 条件用的贼鸡儿好<del>~</del> 如果未定义直接break，如果定义才之后 || 后面的条件(即反射执行的writeReplace方法)</p>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>判断对象的父接口</li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// remaining cases</span></span><br><span class="line"><span class="keyword">if</span> (obj <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">  writeString((String) obj, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (cl.isArray()) &#123;</span><br><span class="line">  writeArray(obj, desc, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Enum) &#123;</span><br><span class="line">  writeEnum((Enum&lt;?&gt;) obj, desc, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Serializable) &#123;</span><br><span class="line">  writeOrdinaryObject(obj, desc, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (extendedDebugInfo) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> NotSerializableException(</span><br><span class="line">      cl.getName() + <span class="string">"\n"</span> + debugInfoStack.toString());</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> NotSerializableException(cl.getName());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在此处判断实现序列化接口 obj instanceof Serializable ，将对象写入字节流</p>
+</blockquote>
+<blockquote>
+<p>在 writeOrdinaryObject 方法中，通过 ObjectStreamClass 描述符判断此序列化是实现了 Serializable 接口还是实现了 Externalizable 接口</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>在 writeSerialData 方法即实现Serializable接口是调用的方法中，按照ObjectStreamClass描述符对每个属性遍历，如果重写了writeObject方法，则反射执行该writeObject方法，否则执行默认的defaultWriteFields方法</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">ObjectStreamClass.ClassDataSlot[] slots = desc.getClassDataLayout();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; slots.length; i++) &#123;</span><br><span class="line">  ObjectStreamClass slotDesc = slots[i].desc;</span><br><span class="line">  <span class="keyword">if</span> (slotDesc.hasWriteObjectMethod()) &#123;</span><br><span class="line">    PutFieldImpl oldPut = curPut;</span><br><span class="line">    curPut = <span class="keyword">null</span>;</span><br><span class="line">    SerialCallbackContext oldContext = curContext;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (extendedDebugInfo) &#123;</span><br><span class="line">      debugInfoStack.push(</span><br><span class="line">        <span class="string">"custom writeObject data (class \""</span> +</span><br><span class="line">        slotDesc.getName() + <span class="string">"\")"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      curContext = <span class="keyword">new</span> SerialCallbackContext(obj, slotDesc);</span><br><span class="line">      bout.setBlockDataMode(<span class="keyword">true</span>);</span><br><span class="line">      slotDesc.invokeWriteObject(obj, <span class="keyword">this</span>);</span><br><span class="line">      bout.setBlockDataMode(<span class="keyword">false</span>);</span><br><span class="line">      bout.writeByte(TC_ENDBLOCKDATA);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      curContext.setUsed();</span><br><span class="line">      curContext = oldContext;</span><br><span class="line">      <span class="keyword">if</span> (extendedDebugInfo) &#123;</span><br><span class="line">        debugInfoStack.pop();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    curPut = oldPut;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    defaultWriteFields(obj, slotDesc);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>同理，在实现了Externalizable接口后，执行writeExternalData方法，执行需序列化的类中定义的writeExternal方法</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curContext = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">if</span> (protocol == PROTOCOL_VERSION_1) &#123;</span><br><span class="line">  obj.writeExternal(<span class="keyword">this</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  bout.setBlockDataMode(<span class="keyword">true</span>);</span><br><span class="line">  obj.writeExternal(<span class="keyword">this</span>);</span><br><span class="line">  bout.setBlockDataMode(<span class="keyword">false</span>);</span><br><span class="line">  bout.writeByte(TC_ENDBLOCKDATA);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="反序列化原理"><a href="#反序列化原理" class="headerlink" title="反序列化原理"></a>反序列化原理</h3><blockquote>
+<p>在反序列化中，根据序列化的类型逐个解析</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> TC_ARRAY:</span><br><span class="line"><span class="keyword">return</span> checkResolve(readArray(unshared));</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> TC_ENUM:</span><br><span class="line"><span class="keyword">return</span> checkResolve(readEnum(unshared));</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> TC_OBJECT:</span><br><span class="line"><span class="keyword">return</span> checkResolve(readOrdinaryObject(unshared));</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>根据JVM中获取的ObjectStreamClass描述符，根据反射形式，执行在类中预定义的readExternal和readObject方法反序列化对象</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ObjectStreamClass desc = readClassDesc(<span class="keyword">false</span>);</span><br><span class="line">desc.checkDeserialize();</span><br><span class="line"></span><br><span class="line">Class&lt;?&gt; cl = desc.forClass();</span><br><span class="line"><span class="keyword">if</span> (cl == String<span class="class">.<span class="keyword">class</span> || <span class="title">cl</span> </span>== Class<span class="class">.<span class="keyword">class</span></span></span><br><span class="line"><span class="class">    || <span class="title">cl</span> </span>== ObjectStreamClass<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> InvalidClassException(<span class="string">"invalid class descriptor"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (desc.isExternalizable()) &#123;</span><br><span class="line">  readExternalData((Externalizable) obj, desc);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  readSerialData(obj, desc);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (obj != <span class="keyword">null</span>) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    obj.readExternal(<span class="keyword">this</span>);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (ClassNotFoundException ex) &#123;</span><br><span class="line">    handles.markException(passHandle, ex);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (obj == <span class="keyword">null</span> || handles.lookupException(passHandle) != <span class="keyword">null</span>) &#123;</span><br><span class="line">  defaultReadFields(<span class="keyword">null</span>, slotDesc); <span class="comment">// skip field values</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (slotDesc.hasReadObjectMethod()) &#123;</span><br><span class="line">  ThreadDeath t = <span class="keyword">null</span>;</span><br><span class="line">  <span class="keyword">boolean</span> reset = <span class="keyword">false</span>;</span><br><span class="line">  SerialCallbackContext oldContext = curContext;</span><br><span class="line">  <span class="keyword">if</span> (oldContext != <span class="keyword">null</span>)</span><br><span class="line">    oldContext.check();</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    curContext = <span class="keyword">new</span> SerialCallbackContext(obj, slotDesc);</span><br><span class="line"></span><br><span class="line">    bin.setBlockDataMode(<span class="keyword">true</span>);</span><br><span class="line">    slotDesc.invokeReadObject(obj, <span class="keyword">this</span>);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (ClassNotFoundException ex) &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">                         * In most cases, the handle table has already</span></span><br><span class="line"><span class="comment">                         * propagated a CNFException to passHandle at this</span></span><br><span class="line"><span class="comment">                         * point; this mark call is included to address cases</span></span><br><span class="line"><span class="comment">                         * where the custom readObject method has cons'ed and</span></span><br><span class="line"><span class="comment">                         * thrown a new CNFException of its own.</span></span><br><span class="line"><span class="comment">                         */</span></span><br><span class="line">    handles.markException(passHandle, ex);</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        curContext.setUsed();</span><br><span class="line">        <span class="keyword">if</span> (oldContext!= <span class="keyword">null</span>)</span><br><span class="line">          oldContext.check();</span><br><span class="line">        curContext = oldContext;</span><br><span class="line">        reset = <span class="keyword">true</span>;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (ThreadDeath x) &#123;</span><br><span class="line">        t = x;  <span class="comment">// defer until reset is true</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">while</span> (!reset);</span><br><span class="line">    <span class="keyword">if</span> (t != <span class="keyword">null</span>)</span><br><span class="line">      <span class="keyword">throw</span> t;</span><br><span class="line">  &#125;</span><br><span class="line">  defaultDataEnd = <span class="keyword">false</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  defaultReadFields(obj, slotDesc);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (slotDesc.hasWriteObjectData()) &#123;</span><br><span class="line">  skipCustomData();</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  bin.setBlockDataMode(<span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (obj != <span class="keyword">null</span> &amp;&amp;</span><br><span class="line">      slotDesc.hasReadObjectNoDataMethod() &amp;&amp;</span><br><span class="line">      handles.lookupException(passHandle) == <span class="keyword">null</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    slotDesc.invokeReadObjectNoData(obj);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="为什么向Stream写入对象的顺序和从Stream读对象的数据的顺序要一样"><a href="#为什么向Stream写入对象的顺序和从Stream读对象的数据的顺序要一样" class="headerlink" title="为什么向Stream写入对象的顺序和从Stream读对象的数据的顺序要一样"></a>为什么向Stream写入对象的顺序和从Stream读对象的数据的顺序要一样</h3><h3 id="为什么父类实现序列化，子类会自动实现"><a href="#为什么父类实现序列化，子类会自动实现" class="headerlink" title="为什么父类实现序列化，子类会自动实现"></a>为什么父类实现序列化，子类会自动实现</h3><blockquote>
+<p>因为父类实现了 序列化接口Externalizable或Serializable，由下来源码可知</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// remaining cases</span></span><br><span class="line"><span class="keyword">if</span> (obj <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">  writeString((String) obj, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (cl.isArray()) &#123;</span><br><span class="line">  writeArray(obj, desc, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Enum) &#123;</span><br><span class="line">  writeEnum((Enum&lt;?&gt;) obj, desc, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Serializable) &#123;</span><br><span class="line">  writeOrdinaryObject(obj, desc, unshared);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (extendedDebugInfo) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> NotSerializableException(</span><br><span class="line">      cl.getName() + <span class="string">"\n"</span> + debugInfoStack.toString());</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> NotSerializableException(cl.getName());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在此处相当于子类也实现了，所以当父类实现序列化时，子类也会自动实现</p>
+</blockquote>
+<h3 id="子类实现序列化，父类的属性不可以正常实例化"><a href="#子类实现序列化，父类的属性不可以正常实例化" class="headerlink" title="子类实现序列化，父类的属性不可以正常实例化"></a>子类实现序列化，父类的属性不可以正常实例化</h3><blockquote>
+<p>实现 Externalizable 接口的类，在反序列化时需要无参的构造函数，所以为了构造父对象时，只能调用无参构造函数作为默认的父对象，因此父类的属性值是无参构造函数执行后的值</p>
+</blockquote>
+<h3 id="serialVersionUID如何保证版本兼容"><a href="#serialVersionUID如何保证版本兼容" class="headerlink" title="serialVersionUID如何保证版本兼容"></a>serialVersionUID如何保证版本兼容</h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># Java序列化</a>
+          
+            <a href="/tags/Externalizable/" rel="tag"># Externalizable</a>
+          
+            <a href="/tags/Serializable/" rel="tag"># Serializable</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/01/%E9%BB%84%E9%87%91%E5%9C%88%E6%B3%95%E5%88%99What-How-Why/" rel="next" title="黄金圈法则What-How-Why">
+                <i class="fa fa-chevron-left"></i> 黄金圈法则What-How-Why
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/11/Java%E7%B1%BB%E5%9E%8B%E4%BF%A1%E6%81%AF/" rel="prev" title="Java类型信息">
+                Java类型信息 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpeg"
+                alt="gTang94" />
+            
+              <p class="site-author-name" itemprop="name">gTang94</p>
+              <p class="site-description motion-element" itemprop="description">Make things as simple as possible, but no simpler</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tg10020617" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:tg10020617@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-users"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.baidu.com/" title="百度" target="_blank">百度</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#what"><span class="nav-number">1.</span> <span class="nav-text">what</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化-反序列化是什么"><span class="nav-number">1.1.</span> <span class="nav-text">序列化&#x2F;反序列化是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化-反序列化有什么用"><span class="nav-number">1.2.</span> <span class="nav-text">序列化&#x2F;反序列化有什么用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化用在什么情况下"><span class="nav-number">1.3.</span> <span class="nav-text">序列化用在什么情况下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化-反序列化怎么用"><span class="nav-number">2.</span> <span class="nav-text">序列化&#x2F;反序列化怎么用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-Serializable-接口"><span class="nav-number">2.1.</span> <span class="nav-text">实现 Serializable 接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#默认方式实现序列化"><span class="nav-number">2.1.1.</span> <span class="nav-text">默认方式实现序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义方式实现序列化"><span class="nav-number">2.1.2.</span> <span class="nav-text">自定义方式实现序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#writeObject-readObject"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">writeObject &#x2F; readObject</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#writeReplace-readResolve"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">writeReplace &#x2F; readResolve</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-Externalizable-接口"><span class="nav-number">2.2.</span> <span class="nav-text">实现 Externalizable 接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">3.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标记接口"><span class="nav-number">3.1.</span> <span class="nav-text">标记接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元数据"><span class="nav-number">3.2.</span> <span class="nav-text">元数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反射"><span class="nav-number">3.3.</span> <span class="nav-text">反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化原理"><span class="nav-number">3.4.</span> <span class="nav-text">序列化原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反序列化原理"><span class="nav-number">3.5.</span> <span class="nav-text">反序列化原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">4.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么向Stream写入对象的顺序和从Stream读对象的数据的顺序要一样"><span class="nav-number">4.1.</span> <span class="nav-text">为什么向Stream写入对象的顺序和从Stream读对象的数据的顺序要一样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么父类实现序列化，子类会自动实现"><span class="nav-number">4.2.</span> <span class="nav-text">为什么父类实现序列化，子类会自动实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#子类实现序列化，父类的属性不可以正常实例化"><span class="nav-number">4.3.</span> <span class="nav-text">子类实现序列化，父类的属性不可以正常实例化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#serialVersionUID如何保证版本兼容"><span class="nav-number">4.4.</span> <span class="nav-text">serialVersionUID如何保证版本兼容</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gTang94</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

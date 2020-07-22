@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UML建模,时序图,类图,用例图,状态图," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="UML是一种可视化、文档化的语言，UML为所有软件开发人员提供了一种图形化表达、标准化的建模语言  时序图（Sequence）简介 是一种UML交互图。它通过描述对象之间发送消息的时间顺序显示多个对象（类、组件、子系统、参与者）之间的动态协作  元素  角色(Actor) 对象(Object) 生命线(LifeLine) 控制焦点(Activation) 消息(Message) 自关联消息 组合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UML建模基础">
+<meta property="og:url" content="http://yoursite.com/2020/06/23/UML%E5%BB%BA%E6%A8%A1%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="gTang94&#39;s note">
+<meta property="og:description" content="UML是一种可视化、文档化的语言，UML为所有软件开发人员提供了一种图形化表达、标准化的建模语言  时序图（Sequence）简介 是一种UML交互图。它通过描述对象之间发送消息的时间顺序显示多个对象（类、组件、子系统、参与者）之间的动态协作  元素  角色(Actor) 对象(Object) 生命线(LifeLine) 控制焦点(Activation) 消息(Message) 自关联消息 组合">
+<meta property="og:image" content="https://s.plantuml.com/img/private-field.png">
+<meta property="og:image" content="https://s.plantuml.com/img/private-method.png">
+<meta property="og:image" content="https://s.plantuml.com/img/protected-field.png">
+<meta property="og:image" content="https://s.plantuml.com/img/protected-method.png">
+<meta property="og:image" content="https://s.plantuml.com/img/package-private-field.png">
+<meta property="og:image" content="https://s.plantuml.com/img/package-private-method.png">
+<meta property="og:image" content="https://s.plantuml.com/img/public-field.png">
+<meta property="og:image" content="https://s.plantuml.com/img/public-method.png">
+<meta property="article:published_time" content="2020-06-23T14:05:25.000Z">
+<meta property="article:modified_time" content="2020-07-22T13:48:25.787Z">
+<meta property="article:author" content="gTang94">
+<meta property="article:tag" content="UML建模">
+<meta property="article:tag" content="时序图">
+<meta property="article:tag" content="类图">
+<meta property="article:tag" content="用例图">
+<meta property="article:tag" content="状态图">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s.plantuml.com/img/private-field.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/23/UML建模基础/"/>
+
+
+
+
+
+  <title>UML建模基础 | gTang94's note</title>
+  
+
+
+
+
+
+
+
+
+
+	<link href='http://fonts.font.im/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="gTang94's note" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">gTang94's note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">gTang94的技术笔记</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/23/UML%E5%BB%BA%E6%A8%A1%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="gTang94">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="gTang94's note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UML建模基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-23T22:05:25+08:00">
+                2020-06-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>UML是一种可视化、文档化的语言，UML为所有软件开发人员提供了一种图形化表达、标准化的建模语言</p>
+</blockquote>
+<h2 id="时序图（Sequence）"><a href="#时序图（Sequence）" class="headerlink" title="时序图（Sequence）"></a>时序图（Sequence）</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>是一种UML交互图。它通过描述对象之间发送消息的时间顺序显示多个对象（类、组件、子系统、参与者）之间的动态协作</p>
+</blockquote>
+<h3 id="元素"><a href="#元素" class="headerlink" title="元素"></a>元素</h3><blockquote>
+<ul>
+<li>角色(Actor)</li>
+<li>对象(Object)</li>
+<li>生命线(LifeLine)</li>
+<li>控制焦点(Activation)</li>
+<li>消息(Message)</li>
+<li>自关联消息</li>
+<li>组合片段</li>
+</ul>
+</blockquote>
+<h4 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h4><blockquote>
+<p>系统角色。 可以是人、其他系统、 子系统。 <strong>用小人图标表示</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">actor Role</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h4><blockquote>
+<p>对象位于时序图的顶部，<strong>用一个矩形表示</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">Object1 -&gt; Object2</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="生命线"><a href="#生命线" class="headerlink" title="生命线"></a>生命线</h4><blockquote>
+<p>时序图中每个对象和底部中心的一条<strong>垂直的虚线</strong>。 <strong>用一条虚线表示</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">Object1 -&gt; Object2</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="控制焦点"><a href="#控制焦点" class="headerlink" title="控制焦点"></a>控制焦点</h4><blockquote>
+<p>时序图中，在对象生命线上某段时间执行的操作。 <strong>用一个很窄的矩形表示</strong></p>
+</blockquote>
+<h4 id="消息"><a href="#消息" class="headerlink" title="消息"></a>消息</h4><blockquote>
+<p>代表对象之间发送的消息。消息分为三类：</p>
+<ol>
+<li><em>同步消息</em> ： 消息的发送者把消息传递给消息的接收者，然后停止活动，等待消息的接收者放弃或者返回控制；<strong>用来表示同步的意思。 用一条实线和实心箭头表示</strong></li>
+<li><em>异步消息</em> : 消息的发送者把消的传递给消息的接收者，然后继续自己的活动，不等待。 <strong>用一条实线和大于号表示</strong></li>
+<li><em>返回消息</em> : 表示从过程调用返回。 <strong>用小于号和虚线表示</strong></li>
+</ol>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">A -&gt; B: 同步消息</span><br><span class="line"></span><br><span class="line">C -\ D: 异步消息</span><br><span class="line"></span><br><span class="line">E --&gt;&gt; F: 返回消息</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="自关联消息"><a href="#自关联消息" class="headerlink" title="自关联消息"></a>自关联消息</h4><blockquote>
+<p>表示方法的自身调用或者一个对象内的一个方法调用另外一个方法。 <strong>用半闭形的长方形和下方实心箭头表示</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">Object1 -&gt; Object2</span><br><span class="line"></span><br><span class="line">Object2 -&gt; Object2: 自关联消息</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="组合片段"><a href="#组合片段" class="headerlink" title="组合片段"></a>组合片段</h4><blockquote>
+<p>组合片段用来解决交互中的执行的条件，它的作用是在时序图中直接表示逻辑组件。 组合片段工13种</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>片段类型</th>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>opt</td>
+<td>选项</td>
+<td>表示一个可选的行为</td>
+</tr>
+<tr>
+<td>alt</td>
+<td>抉择</td>
+<td>在一组行为中根据特定的条件选择某个交互；</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>循环</td>
+<td>说明交互片段会被重复执行</td>
+</tr>
+<tr>
+<td>break</td>
+<td>中断</td>
+<td>提供了和编程语言中的break类拟的机制</td>
+</tr>
+<tr>
+<td>par</td>
+<td>并行</td>
+<td>支持交互片段的并发执行</td>
+</tr>
+<tr>
+<td>region</td>
+<td></td>
+<td>标志在组合片段中先于其他交互片断发生的交互</td>
+</tr>
+<tr>
+<td>seq</td>
+<td>弱顺序</td>
+<td>强迫交互按照特定的顺序执行</td>
+</tr>
+<tr>
+<td>strict</td>
+<td>强顺序</td>
+<td>明确定义了一组交互片段的执行顺序</td>
+</tr>
+<tr>
+<td>consider</td>
+<td>考虑</td>
+<td>明确标志了应该被处理的消息</td>
+</tr>
+<tr>
+<td>ignore</td>
+<td>忽略</td>
+<td>明确定义了交互片段不应该响应的消息</td>
+</tr>
+<tr>
+<td>assert</td>
+<td>断言</td>
+<td>标志了在交互片段中作为事件唯一的合法继续者的操作数</td>
+</tr>
+<tr>
+<td>neg</td>
+<td>否定</td>
+<td>用来标志不应该发生的交互</td>
+</tr>
+<tr>
+<td>ref</td>
+<td></td>
+<td>引用其他地方定义的组合片段</td>
+</tr>
+</tbody></table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">Object1 -&gt; Object2</span><br><span class="line"></span><br><span class="line">alt successful case</span><br><span class="line"></span><br><span class="line">  Object2 -&gt; Object1: 成功</span><br><span class="line">    </span><br><span class="line">else some kind of failure</span><br><span class="line"></span><br><span class="line">  Object2 -&gt; Object1: 失败</span><br><span class="line">   </span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="用例图（Use-Case）"><a href="#用例图（Use-Case）" class="headerlink" title="用例图（Use Case）"></a>用例图（Use Case）</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>用例图主要是用来描述角色与角色、角色与用例之间的连接关系的。 表明<strong>谁要使用系统，及使用该系统可以做些什么</strong></p>
+</blockquote>
+<h3 id="元素-1"><a href="#元素-1" class="headerlink" title="元素"></a>元素</h3><blockquote>
+<ul>
+<li>参与者(Actor)</li>
+<li>用例(Use Case)</li>
+<li>子系统(SubSystem)</li>
+</ul>
+</blockquote>
+<h4 id="参与者"><a href="#参与者" class="headerlink" title="参与者"></a>参与者</h4><blockquote>
+<p>与应用程序或者系统进行交互的用户、组织、外部系统。 <strong>用一个小人表示</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">actor 参与者</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="用例"><a href="#用例" class="headerlink" title="用例"></a>用例</h4><blockquote>
+<p>用例就是外部可见的系统功能，对系统提供的服务进行描述。 <strong>用椭圆表示</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">(这是个用例)</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="子系统"><a href="#子系统" class="headerlink" title="子系统"></a>子系统</h4><blockquote>
+<p>用来展示系统的一部分功能，这部分功能联系紧密</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">left to right direction</span><br><span class="line"></span><br><span class="line">Actor 张三 as stu</span><br><span class="line"></span><br><span class="line">package 学校 &#123;</span><br><span class="line">	usecase 学语文 as ch</span><br><span class="line">    usecase 学数学 as math</span><br><span class="line">    usecase 学体育 as pe</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">stu --&gt; ch</span><br><span class="line">stu --&gt; math</span><br><span class="line">stu --&gt; pe</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h3 id="关系"><a href="#关系" class="headerlink" title="关系"></a>关系</h3><table>
+<thead>
+<tr>
+<th>关系类型</th>
+<th>符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关联</td>
+<td>【无箭头的实线】</td>
+<td>参与者与用例之间的关系</td>
+</tr>
+<tr>
+<td>泛化</td>
+<td>【指向父用例的实线箭头】</td>
+<td>参与者之间 或 用例之间 的关系</td>
+</tr>
+<tr>
+<td>包含</td>
+<td>【指向分解出来的功能用例的虚线箭头】</td>
+<td>用例之间的关系</td>
+</tr>
+<tr>
+<td>扩展</td>
+<td>【指向基础用例的虚线】</td>
+<td>用例之间的关系</td>
+</tr>
+</tbody></table>
+<h4 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h4><blockquote>
+<p>表示参与者与用例之间的通信，任何一方都可以发送或接受信息</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">left to right direction</span><br><span class="line"></span><br><span class="line">Actor 李小龙 as stu</span><br><span class="line">stu -- (幻雨阁)</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="泛化"><a href="#泛化" class="headerlink" title="泛化"></a>泛化</h4><blockquote>
+<p>就是继承关系，子用例继承父用例所有的机构、行为、关系； 子用例可以使用父用例的一段行为，也可以重载这个行为。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">Actor &quot;徐骁&quot; as p</span><br><span class="line">Actor &quot;徐凤年&quot; as c1</span><br><span class="line">Actor &quot;徐龙象&quot; as c2</span><br><span class="line">p &lt;-- c1</span><br><span class="line">p &lt;-- c2</span><br><span class="line"></span><br><span class="line">(订票) &lt;-- (网上订票)</span><br><span class="line">(订票) &lt;-- (电话订票)</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="包含"><a href="#包含" class="headerlink" title="包含"></a>包含</h4><blockquote>
+<p>包含关系用来把一个较复杂的用例所表示的功能分解成较小的步骤</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">(订单系统) &lt;.. (增加订单): 包含关系</span><br><span class="line">(订单系统) &lt;.. (修改订单): 包含关系</span><br><span class="line">(订单系统) &lt;.. (删除订单): 包含关系</span><br><span class="line">(订单系统) &lt;.. (订单详情): 包含关系</span><br><span class="line">(订单系统) &lt;.. (订单列表): 包含关系</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h4><blockquote>
+<p>扩展关系是指用例功能的延申，相当于为基础用例提供一个附加功能</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">(mybatis-plus) ..&gt; (mybatis-plus-generator): mybatis-plus附加了代码生成程序</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="类图（Class）"><a href="#类图（Class）" class="headerlink" title="类图（Class）"></a>类图（Class）</h2><h3 id="简介-2"><a href="#简介-2" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>通过UML类图可以详细的描述系统中的对象和他们的关系</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class DataSourceConfig &#123;</span><br><span class="line">	- dbQuery:IDbQuery;</span><br><span class="line">	- dbType:DbType;</span><br><span class="line">	- schemaName:String;</span><br><span class="line">	- typeConvert:ITypeConvert;</span><br><span class="line">	- url:String;</span><br><span class="line">	- driverName:String</span><br><span class="line">	- username:String</span><br><span class="line">	- password:String</span><br><span class="line">	+ getDbQuery():IDbQuery</span><br><span class="line">	+ getDbType():DbType</span><br><span class="line">	- getDbType(str:String):DbType</span><br><span class="line">	+ getTypeConvert():ITypeConvert</span><br><span class="line">	+ getConn():Connection</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th><strong>Character</strong></th>
+<th><strong>Icon for field</strong></th>
+<th><strong>Icon for method</strong></th>
+<th><strong>Visibility</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-</code></td>
+<td><img src="https://s.plantuml.com/img/private-field.png" alt="img"></td>
+<td><img src="https://s.plantuml.com/img/private-method.png" alt="img"></td>
+<td>private</td>
+</tr>
+<tr>
+<td><code>#</code></td>
+<td><img src="https://s.plantuml.com/img/protected-field.png" alt="img"></td>
+<td><img src="https://s.plantuml.com/img/protected-method.png" alt="img"></td>
+<td>protected</td>
+</tr>
+<tr>
+<td><code>~</code></td>
+<td><img src="https://s.plantuml.com/img/package-private-field.png" alt="img"></td>
+<td><img src="https://s.plantuml.com/img/package-private-method.png" alt="img"></td>
+<td>package private</td>
+</tr>
+<tr>
+<td><code>+</code></td>
+<td><img src="https://s.plantuml.com/img/public-field.png" alt="img"></td>
+<td><img src="https://s.plantuml.com/img/public-method.png" alt="img"></td>
+<td>public</td>
+</tr>
+</tbody></table>
+<h3 id="组成-amp-属性"><a href="#组成-amp-属性" class="headerlink" title="组成 &amp; 属性"></a>组成 &amp; 属性</h3><blockquote>
+<p>UML类图包括：</p>
+<ul>
+<li>类和对象</li>
+<li>类之间的关系</li>
+<li>类之间的多重性</li>
+</ul>
+</blockquote>
+<h4 id="类和对象"><a href="#类和对象" class="headerlink" title="类和对象"></a>类和对象</h4><blockquote>
+<p>对象是描述客观世界中某个具体的实体 类是对一类具有相同特征的对象的描述； 对象是类的实例</p>
+</blockquote>
+<h3 id="关系-1"><a href="#关系-1" class="headerlink" title="关系"></a>关系</h3><h4 id="泛化关系"><a href="#泛化关系" class="headerlink" title="泛化关系"></a>泛化关系</h4><blockquote>
+<p>表示 类与类之间的继承关系、 接口与接口之间的继承关系、 接口对类的实现关系 。 泛化关系有三个条件：</p>
+<ul>
+<li>父类具有的属性、操作、关系， 子类都具有 </li>
+<li>子类包含额外的信息</li>
+<li>可以使用父类的地方，也能使用子类</li>
+</ul>
+</blockquote>
+<h5 id="继承关系"><a href="#继承关系" class="headerlink" title="继承关系"></a>继承关系</h5><blockquote>
+<p>继承 表示一个类继承另一个类的功能，并可以增加它自己新功能的能力 用 空心三角形+实线 表示</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">动物 &lt;|-- 人</span><br><span class="line"></span><br><span class="line">class 动物 &#123;</span><br><span class="line">	# 种类</span><br><span class="line">    + 呼吸</span><br><span class="line">&#125;</span><br><span class="line">class 人 &#123;</span><br><span class="line">	- 名字</span><br><span class="line">    + papapa</span><br><span class="line">&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h5 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h5><blockquote>
+<p>【解释】  实现 表示一个class类实现interface接口的功能 </p>
+<p>【箭头】 用 空心三角形+虚线 或 实线 表示</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">动物 &lt;|.. 人</span><br><span class="line"></span><br><span class="line">interface 动物 &#123;</span><br><span class="line">    + 呼吸</span><br><span class="line">&#125;</span><br><span class="line">class 人 &#123;</span><br><span class="line">	- 名字</span><br><span class="line">    + papapa</span><br><span class="line">&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="关联-1"><a href="#关联-1" class="headerlink" title="关联"></a>关联</h4><blockquote>
+<p>【解释】 对于两个相对独立的对象，当一个对象的实例与另一个对象的一些特定实例存在固定的对应关系时，这两个对象为关联关系 </p>
+<p>【表现】 成员变量 </p>
+<p>【箭头】 用 实线箭头 表示</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">老师 - 学生</span><br><span class="line">学生 - 课程</span><br><span class="line"></span><br><span class="line">class 老师 &#123;&#125;</span><br><span class="line">class 学生 &#123;&#125;</span><br><span class="line">class 课程 &#123;&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="聚合"><a href="#聚合" class="headerlink" title="聚合"></a>聚合</h4><blockquote>
+<p>【解释】 表示一种弱的拥有关系，两个对象具有各自的生命周期 </p>
+<p>【表现】 成员变量 </p>
+<p>【箭头】 用 空心的菱形+实现箭头 表示</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">汽车 o--&gt; 引擎</span><br><span class="line">汽车 o--&gt; 轮胎</span><br><span class="line"></span><br><span class="line">class 汽车 &#123;</span><br><span class="line">	- 引擎</span><br><span class="line">    - 轮胎</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class 引擎 &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">class 轮胎 &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h4><blockquote>
+<p>【解释】 组合是一种强拥有关系，是严格的部分和整体的关系，部分和整体的生命周期一样 </p>
+<p>【表现】 成员变量 </p>
+<p>【箭头】 用 实心的菱形+实现箭头 表示</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">公司 *--&gt; 产品部门</span><br><span class="line">公司 *--&gt; 技术部门</span><br><span class="line"></span><br><span class="line">class 公司 &#123;</span><br><span class="line">	- 产品部门</span><br><span class="line">    - 技术部门</span><br><span class="line">&#125;</span><br><span class="line">class 产品部门 &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">class 技术部门 &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h4><blockquote>
+<p>【解释】 对于两个相对独立的对象，当一个对象负责构造另一个对象的实例，或者依赖另一个对象的服务时，这两个对象之间主要体现为依赖关系 </p>
+<p>【表现】 局部变量、方法的参数或者对静态方法的调用 </p>
+<p>【箭头】 用 虚线箭头 表示</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">动物 ..&gt; 氧气</span><br><span class="line">动物 ..&gt; 水</span><br><span class="line"></span><br><span class="line">class 动物 &#123;</span><br><span class="line">	+ 活着(氧气, 水)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class 氧气 &#123;&#125;</span><br><span class="line">class 水 &#123;&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h2 id="活动图（Activity）"><a href="#活动图（Activity）" class="headerlink" title="活动图（Activity）"></a>活动图（Activity）</h2><blockquote>
+<p>略</p>
+</blockquote>
+<h2 id="组件图（Component）"><a href="#组件图（Component）" class="headerlink" title="组件图（Component）"></a>组件图（Component）</h2><h3 id="简介-3"><a href="#简介-3" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>组件图是用来描述组件与组件之间关系的一种UML图；组件图在宏观层面上显示了构成系统某一个特定方面的实现结构</p>
+</blockquote>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><blockquote>
+<p>组件图可以明确系统的设计，如果按照面向对象方式设计系统和子系统的话，通常可以保证低耦合、提供可重用性</p>
+</blockquote>
+<h3 id="组成-amp-元素"><a href="#组成-amp-元素" class="headerlink" title="组成 &amp; 元素"></a>组成 &amp; 元素</h3><blockquote>
+<ul>
+<li>组件</li>
+<li>接口</li>
+<li>关系</li>
+</ul>
+</blockquote>
+<h4 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h4><blockquote>
+<p>组件 是系统设计的一个模块化部分，它隐藏了内部的实现，对外提供了一组接口。  它是一个封装完好的物理实现单元，具有自己的身份标识和定义明确的接口。 [images] 组件在系统中一般分为三类：部署组件、 工作产品组件、执行组件</p>
+<ul>
+<li>配置组件 是构成系统时必要的组件，是运行系统时需要配置的组件</li>
+<li>工作产品组件 主要是开发过程的产物，是形成配置组件和可执行文件之前必要的工作产品，是部署组件的来源。工作产品组件并不直接参与到可执行系统中，而是用来产生系统的中间产品</li>
+<li>执行组件 是可运行的系统最终运行产生的运行结果</li>
+</ul>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">[First component]</span><br><span class="line">[Another component] as Comp2</span><br><span class="line">component Comp3</span><br><span class="line">component [Last\ncomponent] as Comp4</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h4><blockquote>
+<p>对于一个组件而言，它有两类接口：提供接口、 需求接口</p>
+<ul>
+<li>提供接口 是组件为其他组件提供服务的操作的集合</li>
+<li>需求接口 是组件向其他组件请求响应服务时要遵循的接口</li>
+</ul>
+</blockquote>
+<h4 id="关系-2"><a href="#关系-2" class="headerlink" title="关系"></a>关系</h4><h5 id="依赖关系-1"><a href="#依赖关系-1" class="headerlink" title="依赖关系"></a>依赖关系</h5><blockquote>
+<ul>
+<li>组件与需求接口之间建立依赖关系</li>
+<li>组件与组件之间建立依赖关系：说明在运行过程中A在某些行为上依靠组件B来支持</li>
+</ul>
+</blockquote>
+<h5 id="实现关系"><a href="#实现关系" class="headerlink" title="实现关系"></a>实现关系</h5><blockquote>
+<p>组件与提供接口之间建立实现关系</p>
+</blockquote>
+<h2 id="状态图（State）"><a href="#状态图（State）" class="headerlink" title="状态图（State）"></a>状态图（State）</h2><blockquote>
+<p>状态图 是描述一个对象的所有状态和状态之间的转换的UML图</p>
+</blockquote>
+<h3 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h3><blockquote>
+<p>了解状态图前先了解状态机，状态机是展示状态与状态转换的图</p>
+</blockquote>
+<h4 id="状态"><a href="#状态" class="headerlink" title="状态"></a>状态</h4><blockquote>
+<p>一个模型在其生存期内的状况，如满足某些条件、执行某些操作或等待某些事件</p>
+</blockquote>
+<h4 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h4><blockquote>
+<p>两个不同状态之间的联系，事件可以触发状态之间的转换</p>
+</blockquote>
+<h4 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h4><blockquote>
+<p>在某个时间产生的，可以触发状态转换的部分，如信号、对象的创建和销毁、超时和条件的改变</p>
+</blockquote>
+<h4 id="动作"><a href="#动作" class="headerlink" title="动作"></a>动作</h4><blockquote>
+<p>是在状态机中进行的一个非原子的执行，由一系列动作组成</p>
+</blockquote>
+<h4 id="活动"><a href="#活动" class="headerlink" title="活动"></a>活动</h4><blockquote>
+<p>是一个可执行的原子计算，它导致状态的变更或返回一个值</p>
+</blockquote>
+<h3 id="状态图的状态"><a href="#状态图的状态" class="headerlink" title="状态图的状态"></a>状态图的状态</h3><blockquote>
+<p>状态 描述了状态机所在对象动态行为的运行所产生的结果。 在图形上，用一个圆角矩形表示一个状态。 一个完整的状态有5个组成部分：</p>
+<ul>
+<li>名字： 由一个字符串构成，用以标识不同的状态。状态可以时没有名字的 </li>
+<li>入口/出口动作： 进入/退出这个状态所执行的动作</li>
+<li>内部转换： 是不会引起状态变化的转换</li>
+<li>延迟事件： 该状态下暂不处理，但将推迟到该对象的另一个状态下事件的处理队列</li>
+<li>子状态： 顺序子状态/并发子状态</li>
+</ul>
+</blockquote>
+<h3 id="状态图的转换"><a href="#状态图的转换" class="headerlink" title="状态图的转换"></a>状态图的转换</h3><blockquote>
+<p>转换 是状态间的关联。 当某实体在第一个状态中运行一定的动作，并在某个特定事情发生且某特定条件满足时进入下一状态，转换也有5部分：</p>
+<ul>
+<li>源状态： 在转换被激活之前，对象所处的状态就是转换的源状态</li>
+<li>目标状态： 转换完成后，对象状态发生了变化，这时对象所处的状态就是转换的目标状态</li>
+<li>触发事件： 引起转变的事件</li>
+<li>监护条件： 被放在触发事件的后面，可以引用对象的属性值和触发事件的参数</li>
+<li>动作： 操作调用</li>
+</ul>
+</blockquote>
+<h2 id="对象图（Object）"><a href="#对象图（Object）" class="headerlink" title="对象图（Object）"></a>对象图（Object）</h2><blockquote>
+<p>略</p>
+</blockquote>
+<h2 id="部署图（Deployment）"><a href="#部署图（Deployment）" class="headerlink" title="部署图（Deployment）"></a>部署图（Deployment）</h2><h3 id="简介-4"><a href="#简介-4" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>部署图 表达了在实际应用中软件和它的运行环境的关系，并且描述了软件部署在硬件上的具体方式</p>
+</blockquote>
+<h3 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h3><blockquote>
+<p>节点、部署图中的关系</p>
+</blockquote>
+<h4 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h4><blockquote>
+<p>节点是运行时的物理对象，代表一个计算资源</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line"></span><br><span class="line">node node1</span><br><span class="line">node node2</span><br><span class="line">node node3</span><br><span class="line">node node4</span><br><span class="line">node node5</span><br><span class="line">node1 -- node2</span><br><span class="line">node1 .. node3</span><br><span class="line">node1 ~~ node4</span><br><span class="line">node1 &#x3D;&#x3D; node5</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h4 id="部署图中的关系"><a href="#部署图中的关系" class="headerlink" title="部署图中的关系"></a>部署图中的关系</h4><blockquote>
+<p>部署图的节点之间使用关联关系来表示节点之间的通信路径，称为连接 一般对关联关系不进行命名，使用构造型来区分不同类型的通信路径或通信的实现方式，例如&lt;<Ethernet>&gt;、&lt;&lt;TCP/IP&gt;&gt;、&lt;<HTTP>&gt;等能表示通信协议或网络类型的内容</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UML%E5%BB%BA%E6%A8%A1/" rel="tag"># UML建模</a>
+          
+            <a href="/tags/%E6%97%B6%E5%BA%8F%E5%9B%BE/" rel="tag"># 时序图</a>
+          
+            <a href="/tags/%E7%B1%BB%E5%9B%BE/" rel="tag"># 类图</a>
+          
+            <a href="/tags/%E7%94%A8%E4%BE%8B%E5%9B%BE/" rel="tag"># 用例图</a>
+          
+            <a href="/tags/%E7%8A%B6%E6%80%81%E5%9B%BE/" rel="tag"># 状态图</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/12/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="next" title="源码阅读方法论">
+                <i class="fa fa-chevron-left"></i> 源码阅读方法论
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/06/23/C4Model/" rel="prev" title="C4Model">
+                C4Model <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpeg"
+                alt="gTang94" />
+            
+              <p class="site-author-name" itemprop="name">gTang94</p>
+              <p class="site-description motion-element" itemprop="description">Make things as simple as possible, but no simpler</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tg10020617" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:tg10020617@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-users"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.baidu.com/" title="百度" target="_blank">百度</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#时序图（Sequence）"><span class="nav-number">1.</span> <span class="nav-text">时序图（Sequence）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元素"><span class="nav-number">1.2.</span> <span class="nav-text">元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#角色"><span class="nav-number">1.2.1.</span> <span class="nav-text">角色</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象"><span class="nav-number">1.2.2.</span> <span class="nav-text">对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生命线"><span class="nav-number">1.2.3.</span> <span class="nav-text">生命线</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制焦点"><span class="nav-number">1.2.4.</span> <span class="nav-text">控制焦点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消息"><span class="nav-number">1.2.5.</span> <span class="nav-text">消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自关联消息"><span class="nav-number">1.2.6.</span> <span class="nav-text">自关联消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#组合片段"><span class="nav-number">1.2.7.</span> <span class="nav-text">组合片段</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用例图（Use-Case）"><span class="nav-number">2.</span> <span class="nav-text">用例图（Use Case）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介-1"><span class="nav-number">2.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元素-1"><span class="nav-number">2.2.</span> <span class="nav-text">元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参与者"><span class="nav-number">2.2.1.</span> <span class="nav-text">参与者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用例"><span class="nav-number">2.2.2.</span> <span class="nav-text">用例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#子系统"><span class="nav-number">2.2.3.</span> <span class="nav-text">子系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关系"><span class="nav-number">2.3.</span> <span class="nav-text">关系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#关联"><span class="nav-number">2.3.1.</span> <span class="nav-text">关联</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#泛化"><span class="nav-number">2.3.2.</span> <span class="nav-text">泛化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#包含"><span class="nav-number">2.3.3.</span> <span class="nav-text">包含</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#扩展"><span class="nav-number">2.3.4.</span> <span class="nav-text">扩展</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类图（Class）"><span class="nav-number">3.</span> <span class="nav-text">类图（Class）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介-2"><span class="nav-number">3.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组成-amp-属性"><span class="nav-number">3.2.</span> <span class="nav-text">组成 &amp; 属性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类和对象"><span class="nav-number">3.2.1.</span> <span class="nav-text">类和对象</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关系-1"><span class="nav-number">3.3.</span> <span class="nav-text">关系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#泛化关系"><span class="nav-number">3.3.1.</span> <span class="nav-text">泛化关系</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#继承关系"><span class="nav-number">3.3.1.1.</span> <span class="nav-text">继承关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现"><span class="nav-number">3.3.1.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关联-1"><span class="nav-number">3.3.2.</span> <span class="nav-text">关联</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#聚合"><span class="nav-number">3.3.3.</span> <span class="nav-text">聚合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#组合"><span class="nav-number">3.3.4.</span> <span class="nav-text">组合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#依赖关系"><span class="nav-number">3.3.5.</span> <span class="nav-text">依赖关系</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#活动图（Activity）"><span class="nav-number">4.</span> <span class="nav-text">活动图（Activity）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组件图（Component）"><span class="nav-number">5.</span> <span class="nav-text">组件图（Component）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介-3"><span class="nav-number">5.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#作用"><span class="nav-number">5.2.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组成-amp-元素"><span class="nav-number">5.3.</span> <span class="nav-text">组成 &amp; 元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#组件"><span class="nav-number">5.3.1.</span> <span class="nav-text">组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#接口"><span class="nav-number">5.3.2.</span> <span class="nav-text">接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关系-2"><span class="nav-number">5.3.3.</span> <span class="nav-text">关系</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#依赖关系-1"><span class="nav-number">5.3.3.1.</span> <span class="nav-text">依赖关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现关系"><span class="nav-number">5.3.3.2.</span> <span class="nav-text">实现关系</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态图（State）"><span class="nav-number">6.</span> <span class="nav-text">状态图（State）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#状态机"><span class="nav-number">6.1.</span> <span class="nav-text">状态机</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#状态"><span class="nav-number">6.1.1.</span> <span class="nav-text">状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#转换"><span class="nav-number">6.1.2.</span> <span class="nav-text">转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事件"><span class="nav-number">6.1.3.</span> <span class="nav-text">事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动作"><span class="nav-number">6.1.4.</span> <span class="nav-text">动作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#活动"><span class="nav-number">6.1.5.</span> <span class="nav-text">活动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#状态图的状态"><span class="nav-number">6.2.</span> <span class="nav-text">状态图的状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#状态图的转换"><span class="nav-number">6.3.</span> <span class="nav-text">状态图的转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象图（Object）"><span class="nav-number">7.</span> <span class="nav-text">对象图（Object）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署图（Deployment）"><span class="nav-number">8.</span> <span class="nav-text">部署图（Deployment）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介-4"><span class="nav-number">8.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组成"><span class="nav-number">8.2.</span> <span class="nav-text">组成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#节点"><span class="nav-number">8.2.1.</span> <span class="nav-text">节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部署图中的关系"><span class="nav-number">8.2.2.</span> <span class="nav-text">部署图中的关系</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gTang94</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

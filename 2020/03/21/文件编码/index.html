@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux字符集,字符编码,文件编码," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概念字符集字符集是什么 字符是各种文字和符号的总称，包括国家文字、标点符号、图形符号、数字等。字符集是字符的集合。   ​    虽然我们平时在计算机屏幕上看到的是实体化的汉字，但实际上在计算机存储介质中是按照01001这样的二进制流来存储的。 ​    那么为了实现01二进制到实体化汉字的转换，就需要一个统一的转换标准。这种标准就是字符集标准（字符集）。   Q：为什么会有那么多的字符集标准呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件编码">
+<meta property="og:url" content="http://yoursite.com/2020/03/21/%E6%96%87%E4%BB%B6%E7%BC%96%E7%A0%81/index.html">
+<meta property="og:site_name" content="gTang94&#39;s note">
+<meta property="og:description" content="概念字符集字符集是什么 字符是各种文字和符号的总称，包括国家文字、标点符号、图形符号、数字等。字符集是字符的集合。   ​    虽然我们平时在计算机屏幕上看到的是实体化的汉字，但实际上在计算机存储介质中是按照01001这样的二进制流来存储的。 ​    那么为了实现01二进制到实体化汉字的转换，就需要一个统一的转换标准。这种标准就是字符集标准（字符集）。   Q：为什么会有那么多的字符集标准呢？">
+<meta property="og:image" content="https://res.cloudinary.com/tg10020617/image/upload/v1584787379/20190408173150892_w78xlp.jpg">
+<meta property="article:published_time" content="2020-03-21T10:13:57.000Z">
+<meta property="article:modified_time" content="2020-07-22T13:48:25.787Z">
+<meta property="article:author" content="gTang94">
+<meta property="article:tag" content="Linux字符集">
+<meta property="article:tag" content="字符编码">
+<meta property="article:tag" content="文件编码">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res.cloudinary.com/tg10020617/image/upload/v1584787379/20190408173150892_w78xlp.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/21/文件编码/"/>
+
+
+
+
+
+  <title>文件编码 | gTang94's note</title>
+  
+
+
+
+
+
+
+
+
+
+	<link href='http://fonts.font.im/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="gTang94's note" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">gTang94's note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">gTang94的技术笔记</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/21/%E6%96%87%E4%BB%B6%E7%BC%96%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="gTang94">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="gTang94's note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">文件编码</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-21T18:13:57+08:00">
+                2020-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="字符集"><a href="#字符集" class="headerlink" title="字符集"></a>字符集</h3><h4 id="字符集是什么"><a href="#字符集是什么" class="headerlink" title="字符集是什么"></a>字符集是什么</h4><blockquote>
+<p>字符是各种文字和符号的总称，包括国家文字、标点符号、图形符号、数字等。字符集是字符的集合。</p>
+</blockquote>
+<blockquote>
+<p>​    虽然我们平时在计算机屏幕上看到的是实体化的汉字，但实际上在计算机存储介质中是按照01001这样的二进制流来存储的。</p>
+<p>​    那么为了实现01二进制到实体化汉字的转换，就需要一个统一的转换标准。这种标准就是字符集标准（字符集）。</p>
+</blockquote>
+<blockquote>
+<p>Q：为什么会有那么多的字符集标准呢？</p>
+<p>A：很多规范和标准在最初制定时并没有意识到需要全球普适，于是，就出现了互不兼容的多个标准了</p>
+</blockquote>
+<h4 id="字符集有什么用"><a href="#字符集有什么用" class="headerlink" title="字符集有什么用"></a>字符集有什么用</h4><blockquote>
+<p>字符集规定了 <strong>某个文字</strong> 和 <strong>某串二进制数字</strong>(文字的二进制存放方式) 的转换关系</p>
+</blockquote>
+<h3 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h3><blockquote>
+<p>将<strong>字符(汉字)</strong>转换为<strong>字节序列(01二进制序列)</strong></p>
+</blockquote>
+<h3 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h3><blockquote>
+<p>将<strong>字节序列(01二进制序列)</strong>转换为<strong>字符(汉字)</strong></p>
+</blockquote>
+<h3 id="字符编码"><a href="#字符编码" class="headerlink" title="字符编码"></a>字符编码</h3><blockquote>
+<p>字符集只是一个规则集合的名字，对应到现实生活中，字符集就是某种语言的称谓，如：汉语、英语、日语…</p>
+</blockquote>
+<blockquote>
+<p>对于有所有的字符集规则，要正确编码和解码一个字符，需要三个关键元素：<strong>字库表</strong>、<strong>编码字符集</strong>、 <strong>字符编码</strong></p>
+</blockquote>
+<h4 id="字库表"><a href="#字库表" class="headerlink" title="字库表"></a>字库表</h4><blockquote>
+<p>是一个相当于所有可读或者可显示字符的数据库。字库表决定了可使用的素有字符的范围。</p>
+</blockquote>
+<h4 id="编码字符集"><a href="#编码字符集" class="headerlink" title="编码字符集"></a>编码字符集</h4><blockquote>
+<p>即用一个编码值（code point）表示一个字符在字库中的位置</p>
+</blockquote>
+<h4 id="字符编码-1"><a href="#字符编码-1" class="headerlink" title="字符编码"></a>字符编码</h4><blockquote>
+<p>编码字符集 和 实际存储值 之间的转换关系，一般来说都会直接将 code point 做为编码后的值直接存储的。</p>
+<p>如：在ASCII表中，字符 A 在表中排在65位，而编码后的A的二进制是 01000001 ，转换成十进制也就是65</p>
+</blockquote>
+<h2 id="常用的-编码字符集-和-字符编码"><a href="#常用的-编码字符集-和-字符编码" class="headerlink" title="常用的 编码字符集 和 字符编码"></a>常用的 <strong>编码字符集</strong> 和 <strong>字符编码</strong></h2><h3 id="编码字符集-1"><a href="#编码字符集-1" class="headerlink" title="编码字符集"></a>编码字符集</h3><h4 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h4><blockquote>
+<p>Unicode就是概念中提到的编码字符集。</p>
+</blockquote>
+<blockquote>
+<p>随着互联网的发展，对同一字库集的要求越来越迫切，Unicode标准也就随之出现了。</p>
+<p>Unicode字库集几乎涵盖了所有国家语言中出现的符号和问题，并为做了他们编号。</p>
+<p>Unicode的编号从0000开始，一直到10FFFF公分为17个Plan，每个Plan有65535个字符。一些字符编码只是实现了其中的一个或几个Plan，如UTF-8只实现了第一个Plan</p>
+</blockquote>
+<h3 id="字符编码-2"><a href="#字符编码-2" class="headerlink" title="字符编码"></a>字符编码</h3><h4 id="UTF-8"><a href="#UTF-8" class="headerlink" title="UTF-8"></a>UTF-8</h4><blockquote>
+<p>UTF-8就是概念中提到的字符编码，也就是Unicode字库集的一种实现。</p>
+</blockquote>
+<h4 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h4><blockquote>
+<p>上世纪60年代，美国制定的一套对英语字符和二进制之间的对应关系。</p>
+</blockquote>
+<blockquote>
+<p>我的理解是ASCII和Unicode是平等的关系。并且ASCII既是编码字符集又是字符编码(单字节字符编码)，ASCII表中的编号是直接存储在计算机中的。而Unicode只是定义了编号(用来和具体实现对应)，需要在实现它的字符编码中具体定义在计算机中存储的值。</p>
+</blockquote>
+<h4 id="GBK-GB2312-GB18030"><a href="#GBK-GB2312-GB18030" class="headerlink" title="GBK/GB2312/GB18030"></a>GBK/GB2312/GB18030</h4><blockquote>
+<p>GB系列是中国国家标准中文字符集</p>
+</blockquote>
+<h4 id="EUC-JP"><a href="#EUC-JP" class="headerlink" title="EUC-JP"></a>EUC-JP</h4><blockquote>
+<p>日本国家标准字符集</p>
+</blockquote>
+<h4 id="注："><a href="#注：" class="headerlink" title="注："></a>注：</h4><blockquote>
+<p>ASCII、GB系列、EUC-JP既是编码字符集又是字符编码，即这些字符集中的编号可以直接存储到计算机中。</p>
+</blockquote>
+<blockquote>
+<p>Unicode是为了统一所有国家的字符而制定的字符集，UTF-8是Unicode的实现之一。Unicode中的编号不能直接存储到计算机中，而是用来和UTF-8对应，UTF-8中的编码才是存储到计算机中的，这和ASCII、GB系列、EUC-JP的不同。</p>
+</blockquote>
+<blockquote>
+<p>所以，GBK、EUC-JP和UTF-8的转换都需要通过Unicode，即：</p>
+<p>GBK 转 UTF-8 ： GBK -&gt; Unicode -&gt; UTF-8</p>
+<p>UTF-8 转 GBK：UTF-8 -&gt; Unicode -&gt; GBK</p>
+</blockquote>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="为什么出现乱码"><a href="#为什么出现乱码" class="headerlink" title="为什么出现乱码"></a>为什么出现乱码</h3><blockquote>
+<p>简单来说，出现乱码原因是编码和解码时用了不同或者不兼容的字符集</p>
+</blockquote>
+<blockquote>
+<p>比如：</p>
+<p>​        「中国」两个字用UTF-8编码后为下面（可用附录中在线转换工具），所以在计算机中存储的是E4B8ADE59BBD的二进制值</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>字符</strong></th>
+<th align="left"><strong>编码10进制</strong></th>
+<th align="left"><strong>编码16进制</strong></th>
+<th align="left"><strong>Unicode编码10进制</strong></th>
+<th align="left"><strong>Unicode编码16进制</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">中</td>
+<td align="left">14989485</td>
+<td align="left">E4B8AD</td>
+<td align="left">20013</td>
+<td align="left">4E2D</td>
+</tr>
+<tr>
+<td align="left">国</td>
+<td align="left">15047613</td>
+<td align="left">E59BBD</td>
+<td align="left">22269</td>
+<td align="left">56FD</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>然后，在解码的时候用GBK解码，就会出现乱码的情况</p>
+</blockquote>
+<h3 id="乱码转换"><a href="#乱码转换" class="headerlink" title="乱码转换"></a>乱码转换</h3><ul>
+<li>在已知页面编码的情况下，把乱码通过在线工具，编码成计算机中存储的二进制码</li>
+<li>在得到二进制码的情况下，按照各类字符编码的规则，猜测原来的编码方式</li>
+<li>按照猜测的编码方式，将二进制码解码出来</li>
+</ul>
+<h2 id="Linux编码操作"><a href="#Linux编码操作" class="headerlink" title="Linux编码操作"></a>Linux编码操作</h2><h3 id="locale"><a href="#locale" class="headerlink" title="locale"></a>locale</h3><blockquote>
+<p>Linux中的locale是表达程序用户地区方面的软件设定。</p>
+<p>locale的设定包括 数据格式、货币金额格式、小数点符号、千分位符号、度量衡单位、通货符号、日期写法、日历类型、文字排序、姓名格式、地址等等。</p>
+</blockquote>
+<blockquote>
+<ol>
+<li>LANGUAGE 指定个人对语言环境值的主次偏好，例如zh_CN:en_US:en</li>
+<li>LC_ALL 这不是一个环境变量，是一个可被C语言库函数setlocale设置的宏，其值可覆盖所有其他的locale设定。因此缺省时此值为空</li>
+<li>LC_xxx 可设定locale各方面（category）的值，可以覆盖LANG的值。</li>
+<li>LANG 指定默认使用的locale值</li>
+</ol>
+</blockquote>
+<h3 id="file"><a href="#file" class="headerlink" title="file"></a>file</h3><blockquote>
+<p>file -i filename    查看文件的字符集</p>
+</blockquote>
+<h3 id="vim"><a href="#vim" class="headerlink" title="vim"></a>vim</h3><blockquote>
+<p>在vim中使用 :set fileencoding 查看文件编码格式</p>
+</blockquote>
+<h3 id="iconv"><a href="#iconv" class="headerlink" title="iconv"></a>iconv</h3><blockquote>
+<p>Iconv -f encoding -t encoding sourcefile &gt;&gt; output</p>
+</blockquote>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><h3 id="在线查看字符集-编码关系"><a href="#在线查看字符集-编码关系" class="headerlink" title="在线查看字符集/编码关系"></a><a href="http://www.mytju.com/classcode/tools/encode_utf8.asp" target="_blank" rel="noopener">在线查看字符集/编码关系</a></h3><h3 id="Unicode-1"><a href="#Unicode-1" class="headerlink" title="Unicode"></a><a href="https://en.wikipedia.org/wiki/Unicode" target="_blank" rel="noopener">Unicode</a></h3><h3 id="locale-1"><a href="#locale-1" class="headerlink" title="locale"></a><a href="[https://zh.wikipedia.org/wiki/区域设置](https://zh.wikipedia.org/wiki/区域设置)">locale</a></h3><h3 id="ASCII码表"><a href="#ASCII码表" class="headerlink" title="ASCII码表"></a>ASCII码表</h3><p><img src="https://res.cloudinary.com/tg10020617/image/upload/v1584787379/20190408173150892_w78xlp.jpg" alt="img"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux%E5%AD%97%E7%AC%A6%E9%9B%86/" rel="tag"># Linux字符集</a>
+          
+            <a href="/tags/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81/" rel="tag"># 字符编码</a>
+          
+            <a href="/tags/%E6%96%87%E4%BB%B6%E7%BC%96%E7%A0%81/" rel="tag"># 文件编码</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/21/Kafka-Connect/" rel="next" title="Kafka Connect">
+                <i class="fa fa-chevron-left"></i> Kafka Connect
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/21/Mysql%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E9%83%A8%E7%BD%B2/" rel="prev" title="Mysql主从同步部署">
+                Mysql主从同步部署 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpeg"
+                alt="gTang94" />
+            
+              <p class="site-author-name" itemprop="name">gTang94</p>
+              <p class="site-description motion-element" itemprop="description">Make things as simple as possible, but no simpler</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tg10020617" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:tg10020617@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-users"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.baidu.com/" title="百度" target="_blank">百度</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符集"><span class="nav-number">1.1.</span> <span class="nav-text">字符集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字符集是什么"><span class="nav-number">1.1.1.</span> <span class="nav-text">字符集是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符集有什么用"><span class="nav-number">1.1.2.</span> <span class="nav-text">字符集有什么用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编码"><span class="nav-number">1.2.</span> <span class="nav-text">编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解码"><span class="nav-number">1.3.</span> <span class="nav-text">解码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符编码"><span class="nav-number">1.4.</span> <span class="nav-text">字符编码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字库表"><span class="nav-number">1.4.1.</span> <span class="nav-text">字库表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编码字符集"><span class="nav-number">1.4.2.</span> <span class="nav-text">编码字符集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符编码-1"><span class="nav-number">1.4.3.</span> <span class="nav-text">字符编码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用的-编码字符集-和-字符编码"><span class="nav-number">2.</span> <span class="nav-text">常用的 编码字符集 和 字符编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编码字符集-1"><span class="nav-number">2.1.</span> <span class="nav-text">编码字符集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Unicode"><span class="nav-number">2.1.1.</span> <span class="nav-text">Unicode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符编码-2"><span class="nav-number">2.2.</span> <span class="nav-text">字符编码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#UTF-8"><span class="nav-number">2.2.1.</span> <span class="nav-text">UTF-8</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ASCII"><span class="nav-number">2.2.2.</span> <span class="nav-text">ASCII</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GBK-GB2312-GB18030"><span class="nav-number">2.2.3.</span> <span class="nav-text">GBK&#x2F;GB2312&#x2F;GB18030</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#EUC-JP"><span class="nav-number">2.2.4.</span> <span class="nav-text">EUC-JP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注："><span class="nav-number">2.2.5.</span> <span class="nav-text">注：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见问题"><span class="nav-number">3.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么出现乱码"><span class="nav-number">3.1.</span> <span class="nav-text">为什么出现乱码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#乱码转换"><span class="nav-number">3.2.</span> <span class="nav-text">乱码转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux编码操作"><span class="nav-number">4.</span> <span class="nav-text">Linux编码操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#locale"><span class="nav-number">4.1.</span> <span class="nav-text">locale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#file"><span class="nav-number">4.2.</span> <span class="nav-text">file</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vim"><span class="nav-number">4.3.</span> <span class="nav-text">vim</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iconv"><span class="nav-number">4.4.</span> <span class="nav-text">iconv</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附录"><span class="nav-number">5.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在线查看字符集-编码关系"><span class="nav-number">5.1.</span> <span class="nav-text">在线查看字符集&#x2F;编码关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unicode-1"><span class="nav-number">5.2.</span> <span class="nav-text">Unicode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#locale-1"><span class="nav-number">5.3.</span> <span class="nav-text">locale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ASCII码表"><span class="nav-number">5.4.</span> <span class="nav-text">ASCII码表</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gTang94</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
