@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>gTang94&#39;s note</title>
+  <title>gtang94&#39;s note</title>
   
-  <subtitle>gTang94的技术笔记</subtitle>
+  <subtitle>gtang94的技术笔记</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
@@ -10,7 +10,7 @@
   <id>http://yoursite.com/</id>
   
   <author>
-    <name>gTang94</name>
+    <name>gtang94</name>
     
   </author>
   
