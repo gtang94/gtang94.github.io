@@ -93,7 +93,7 @@
 <meta property="og:site_name" content="gtang94&#39;s note">
 <meta property="og:description" content="Docker容器IP docker inspect 容器ID | grep IPAddr eg: docker inspect 5941fb0c8204|grep IPAddr  宿主&#x2F;容器文件拷贝宿主机 &#x3D;&gt; 容器 docker cp 宿主机文件目录位置 容器名称:容器目录位置 eg: docker cp .&#x2F;test.txt cservice-kafka-1:&#x2F;opt&#x2F;kafka  容器">
 <meta property="article:published_time" content="2020-03-21T09:56:32.000Z">
-<meta property="article:modified_time" content="2020-08-23T11:44:02.259Z">
+<meta property="article:modified_time" content="2020-08-30T08:15:02.855Z">
 <meta property="article:author" content="gtang94">
 <meta property="article:tag" content="gtang94">
 <meta property="article:tag" content=" Hexo">
@@ -433,12 +433,49 @@
 <p>connect-distributed.sh distributed配置文件</p>
 <p>eg: <code>bin/connect-distributed.sh config/connect-distributed.properties</code></p>
 </blockquote>
-<h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><h3 id="导入-导出数据"><a href="#导入-导出数据" class="headerlink" title="导入/导出数据"></a>导入/导出数据</h3><h4 id="导出"><a href="#导出" class="headerlink" title="导出"></a>导出</h4><blockquote>
-<p>mongodump –host 172.18.142.225 –port 27018 –username “admin” -p “BTZ1107” –authenticationDatabase admin -d policy -c polices –out backup.bak</p>
+<h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><h3 id="数据备份"><a href="#数据备份" class="headerlink" title="数据备份"></a>数据备份</h3><h4 id="导入-导出-和-备份-恢复的区别"><a href="#导入-导出-和-备份-恢复的区别" class="headerlink" title="导入/导出 和 备份/恢复的区别"></a>导入/导出 和 备份/恢复的区别</h4><blockquote>
+<p>导出/导出命令：<code>mongoexport</code> / <code>mongoimport</code></p>
+<p>备份/恢复命令：<code>mongodump</code> / <code>mongorestore</code></p>
 </blockquote>
-<h4 id="导入"><a href="#导入" class="headerlink" title="导入"></a>导入</h4><blockquote>
-<p>mongoimport –db policy –collection polices –file /3.json</p>
+<blockquote>
+<ul>
+<li>mongodump导出的数据是bson格式的，而二进制形式的数据，不过可以使用mongo自带的bsondump命令查看里面的内容，而mongoexport导出的是文本，可以是csv/json格式的数据</li>
+<li>json可读性强但体积大，bson可读性低但体积小</li>
+<li>不同mongo版本之间，通过bson进行数据迁移可能会出现兼容性问题</li>
+<li>json虽然不会出现兼容性问题，但导出后只保留了数据部分，不保留索引、账户等基础信息</li>
+</ul>
 </blockquote>
+<h4 id="导入和导出"><a href="#导入和导出" class="headerlink" title="导入和导出"></a>导入和导出</h4><blockquote>
+<p><code>mongoexport</code> 命令参数：</p>
+<ul>
+<li>-h : MongoDB所在服务器地址</li>
+<li>-d : 需要恢复的数据库实例</li>
+<li>-c : 需要恢复的集合</li>
+<li>-f : 需要导出的字段</li>
+<li>-o : 表示导出的文件名</li>
+<li>-q : 查询条件</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><code>mongoimport</code> 命令参数：</p>
+<ul>
+<li>-type : 指明要导入的文件格式json(默认)、csv、tsv</li>
+<li>-headerline : 指明不要导入第一行，因为第一行是列明</li>
+<li>-file : 指明要导入的文件路径</li>
+</ul>
+</blockquote>
+<h5 id="导出"><a href="#导出" class="headerlink" title="导出"></a>导出</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongoexport -h 127.0.0.1 -u user -p <span class="built_in">pwd</span> -d DATABASE -c <span class="built_in">log</span> -q <span class="string">'&#123;"createTime":&#123;"$gte":"20200830"&#125;&#125;'</span> -o /tmp/export.log --authenticationDatabase=admin</span><br></pre></td></tr></table></figure>
+
+<h5 id="导入"><a href="#导入" class="headerlink" title="导入"></a>导入</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongoimport -h 127.0.0.1 -u user -p <span class="built_in">pwd</span> -d DATABASE -c <span class="built_in">log</span> --<span class="built_in">type</span>=json --file=/tmp/export.log --authenticationDatabase=admin</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="备份和恢复"><a href="#备份和恢复" class="headerlink" title="备份和恢复"></a>备份和恢复</h4><h5 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 备份单个表</span></span><br><span class="line">mongodump --host 172.18.142.225 --port 27018 --username <span class="string">"admin"</span> -p <span class="string">"BTZ1107"</span> --authenticationDatabase admin -d policy -c polices --out backup.bak</span><br><span class="line"></span><br><span class="line"><span class="comment"># 备份单个库</span></span><br><span class="line">mongodump --host 127.0.0.1 --port 27017 --username <span class="string">"admin"</span> -p <span class="string">"BTZ1102"</span> --authenticationDatabase admin -d policy --out backup.bak</span><br></pre></td></tr></table></figure>
+
+<h5 id="恢复"><a href="#恢复" class="headerlink" title="恢复"></a>恢复</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 恢复单个表</span></span><br><span class="line">mongorestore --host 172.18.142.225 --port 27018 --username <span class="string">"admin"</span> -p <span class="string">"BTZ1107"</span> --authenticationDatabase admin -d policy -c polices backup.bak/policy/policies.bson</span><br><span class="line"></span><br><span class="line"><span class="comment"># 恢复单个库</span></span><br><span class="line">mongorestore --host 172.18.142.225 --port 27018 --username <span class="string">"admin"</span> -p <span class="string">"BTZ1107"</span> --authenticationDatabase admin -d policy backup.bak</span><br></pre></td></tr></table></figure>
+
+
+
 <h3 id="Docker容器中配置Mongo副本集"><a href="#Docker容器中配置Mongo副本集" class="headerlink" title="Docker容器中配置Mongo副本集"></a>Docker容器中配置Mongo副本集</h3><blockquote>
 <ol>
 <li>mongod 以副本集形式启动 <code>mongod --replSet rs0</code></li>
@@ -574,7 +611,7 @@
               
                 <a href="/archives/%20%7C%7C%20archive">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -596,7 +633,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-count">68</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -659,7 +696,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">1.</span> <span class="nav-text">Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#容器IP"><span class="nav-number">1.1.</span> <span class="nav-text">容器IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#宿主-容器文件拷贝"><span class="nav-number">1.2.</span> <span class="nav-text">宿主&#x2F;容器文件拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#宿主机-gt-容器"><span class="nav-number">1.2.1.</span> <span class="nav-text">宿主机 &#x3D;&gt; 容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#容器-gt-宿主机"><span class="nav-number">1.2.2.</span> <span class="nav-text">容器 &#x3D;&gt; 宿主机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root用户启动容器（root用户启动后passwd修改root密码）"><span class="nav-number">1.3.</span> <span class="nav-text">root用户启动容器（root用户启动后passwd修改root密码）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看docker启动日志"><span class="nav-number">1.4.</span> <span class="nav-text">查看docker启动日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zookeeper"><span class="nav-number">2.</span> <span class="nav-text">Zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka"><span class="nav-number">3.</span> <span class="nav-text">Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-topic"><span class="nav-number">3.1.</span> <span class="nav-text">Kafka topic</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka-topics-list"><span class="nav-number">3.1.1.</span> <span class="nav-text">Kafka topics list</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka-topic内容"><span class="nav-number">3.1.2.</span> <span class="nav-text">Kafka topic内容</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-connect-启动"><span class="nav-number">3.2.</span> <span class="nav-text">Kafka connect 启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#standalone模式"><span class="nav-number">3.2.1.</span> <span class="nav-text">standalone模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#distributed模式"><span class="nav-number">3.2.2.</span> <span class="nav-text">distributed模式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB"><span class="nav-number">4.</span> <span class="nav-text">MongoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#导入-导出数据"><span class="nav-number">4.1.</span> <span class="nav-text">导入&#x2F;导出数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#导出"><span class="nav-number">4.1.1.</span> <span class="nav-text">导出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#导入"><span class="nav-number">4.1.2.</span> <span class="nav-text">导入</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker容器中配置Mongo副本集"><span class="nav-number">4.2.</span> <span class="nav-text">Docker容器中配置Mongo副本集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mongo副本集"><span class="nav-number">4.3.</span> <span class="nav-text">Mongo副本集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#增加副本集"><span class="nav-number">4.3.1.</span> <span class="nav-text">增加副本集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除副本集"><span class="nav-number">4.3.2.</span> <span class="nav-text">删除副本集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改conf"><span class="nav-number">4.3.3.</span> <span class="nav-text">修改conf</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zip"><span class="nav-number">5.</span> <span class="nav-text">Zip</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩"><span class="nav-number">5.1.</span> <span class="nav-text">压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解压缩"><span class="nav-number">5.2.</span> <span class="nav-text">解压缩</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">1.</span> <span class="nav-text">Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#容器IP"><span class="nav-number">1.1.</span> <span class="nav-text">容器IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#宿主-容器文件拷贝"><span class="nav-number">1.2.</span> <span class="nav-text">宿主&#x2F;容器文件拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#宿主机-gt-容器"><span class="nav-number">1.2.1.</span> <span class="nav-text">宿主机 &#x3D;&gt; 容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#容器-gt-宿主机"><span class="nav-number">1.2.2.</span> <span class="nav-text">容器 &#x3D;&gt; 宿主机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root用户启动容器（root用户启动后passwd修改root密码）"><span class="nav-number">1.3.</span> <span class="nav-text">root用户启动容器（root用户启动后passwd修改root密码）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看docker启动日志"><span class="nav-number">1.4.</span> <span class="nav-text">查看docker启动日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zookeeper"><span class="nav-number">2.</span> <span class="nav-text">Zookeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka"><span class="nav-number">3.</span> <span class="nav-text">Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-topic"><span class="nav-number">3.1.</span> <span class="nav-text">Kafka topic</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka-topics-list"><span class="nav-number">3.1.1.</span> <span class="nav-text">Kafka topics list</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka-topic内容"><span class="nav-number">3.1.2.</span> <span class="nav-text">Kafka topic内容</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-connect-启动"><span class="nav-number">3.2.</span> <span class="nav-text">Kafka connect 启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#standalone模式"><span class="nav-number">3.2.1.</span> <span class="nav-text">standalone模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#distributed模式"><span class="nav-number">3.2.2.</span> <span class="nav-text">distributed模式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB"><span class="nav-number">4.</span> <span class="nav-text">MongoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据备份"><span class="nav-number">4.1.</span> <span class="nav-text">数据备份</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#导入-导出-和-备份-恢复的区别"><span class="nav-number">4.1.1.</span> <span class="nav-text">导入&#x2F;导出 和 备份&#x2F;恢复的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#导入和导出"><span class="nav-number">4.1.2.</span> <span class="nav-text">导入和导出</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#导出"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">导出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#导入"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">导入</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#备份和恢复"><span class="nav-number">4.1.3.</span> <span class="nav-text">备份和恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#备份"><span class="nav-number">4.1.3.1.</span> <span class="nav-text">备份</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#恢复"><span class="nav-number">4.1.3.2.</span> <span class="nav-text">恢复</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker容器中配置Mongo副本集"><span class="nav-number">4.2.</span> <span class="nav-text">Docker容器中配置Mongo副本集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mongo副本集"><span class="nav-number">4.3.</span> <span class="nav-text">Mongo副本集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#增加副本集"><span class="nav-number">4.3.1.</span> <span class="nav-text">增加副本集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除副本集"><span class="nav-number">4.3.2.</span> <span class="nav-text">删除副本集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改conf"><span class="nav-number">4.3.3.</span> <span class="nav-text">修改conf</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zip"><span class="nav-number">5.</span> <span class="nav-text">Zip</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩"><span class="nav-number">5.1.</span> <span class="nav-text">压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解压缩"><span class="nav-number">5.2.</span> <span class="nav-text">解压缩</span></a></li></ol></li></ol></div>
             
 
           </div>
