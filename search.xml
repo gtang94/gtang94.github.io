@@ -1,6 +1,329 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Shiro</title>
+    <url>/2020/11/01/Shiro/</url>
+    <content><![CDATA[<h2 id="Shiro简介"><a href="#Shiro简介" class="headerlink" title="Shiro简介"></a>Shiro简介</h2><blockquote>
+<p>shiro是java安全框架，shiro不会去维护用户、也不会去维护权限，需要程序员自己自己这些，shiro框架提供对交互过程的处理。</p>
+</blockquote>
+<blockquote>
+<p>shiro可以完成以下基本功能：</p>
+<ul>
+<li>Authentication: 身份认证、登录，验证用户是否拥有相应身份</li>
+<li>Authorization: 授权（权限验证）,即验证某个已认证得用户是否拥有某个权限</li>
+<li>Session Management: 会话管理(Session管理)</li>
+<li>Cryptograhpy: 加密</li>
+</ul>
+<p>也可完成以下高级功能：</p>
+<ul>
+<li>Web Support: 集成到web环境</li>
+<li>Caching: 缓存，在用户登录后，将用户的基本信息、权限信息缓存到cache中，减小DB的压力、提供查询效率</li>
+<li>Concurrency: 支持多线程应用的并发验证，如在一个线程中开启另一个线程，通过shiro可以自动将权限传递过去</li>
+<li>Testing: 提供测试支持</li>
+<li>Run as: 允许一个用户假装成另一个用户去访问</li>
+<li>Remember me: 一次登录后，下次再来的会话不用再次登录</li>
+</ul>
+</blockquote>
+<h3 id="从应用程序角度看shiro"><a href="#从应用程序角度看shiro" class="headerlink" title="从应用程序角度看shiro"></a>从应用程序角度看shiro</h3><p><img src="https://atts.w3cschool.cn/attachments/image/wk/shiro/2.png" alt="images"></p>
+<blockquote>
+<ul>
+<li>subject: 主体。 代表了当前“用户”，是一个抽象概念。 这个subject可以是人，也可以是程序。所有的subject都绑定到securitymanager上，即对subject的所有操作，实际都是securitymanager去执行的。 subject和slf4j类似，都起门面的作用。</li>
+<li>securitymanager: 安全管理器。 是shrio的核心，管理这所有的subject，也就是管理着所有和安全有关的操作。</li>
+<li>域，realm相当于dataSources，是securitymanager的数据源，securitymanager操作时所有的用户数据、权限数据都是从这个realm中获取的。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>所以，对于应用程序来说，使用Shiro时包含以下两步：</p>
+<ol>
+<li>通过subject提供的API进行应用的认证、授权</li>
+<li>向shiro框架提供数据源，即Realm</li>
+</ol>
+</blockquote>
+<h3 id="从框架内部看shiro"><a href="#从框架内部看shiro" class="headerlink" title="从框架内部看shiro"></a>从框架内部看shiro</h3><p><img src="https://atts.w3cschool.cn/attachments/image/wk/shiro/3.png" alt="images"></p>
+<blockquote>
+<p>Subject: 主体，可以看到subject可以是任何可以使用shiro的application</p>
+<p>Security Manager: shiro框架的核心，它管理者所有的Subject，负责进行认证、授权、会话、缓存的管理</p>
+<p>Authenticator: 认证器，负责主体的认证，如果用户觉得Shiro默认的不好用，则可以自定义实现。Authenticator中的Authentication Strategy用来决定哪种情况下认证通过</p>
+<p>Authrizer: 授权器（访问控制器），用来决定主体是否有权限进行相应的操作，即控制着用户能访问application中的哪些功能</p>
+<p>Realm: 可以有一个或多个的Realm，是数据源，可以是JDBC实现的，也可以是LDAP实现等。Shiro并不知道我们的用户/权限具体的数据结构或存储位置，所以需要我们自己实现这个Realm</p>
+<p>Session Manager: 此处的Session并不是传统意义上的Web中的Session，而是Shiro抽象出来的自己的Session</p>
+<p>SessionDAO: 是用于操作Shiro抽象出的Session的数据访问对象，用户Session的CRUD，比如要把Session放入到redis中，则可以实现自己的SessionDAO用于操作redis中的这些Session数据</p>
+<p>CacheManager: 缓存控制器，用来管理用户、角色、权限等的缓存</p>
+<p>Cryptography: 加密模块</p>
+</blockquote>
+<h2 id="身份验证"><a href="#身份验证" class="headerlink" title="身份验证"></a>身份验证</h2><blockquote>
+<p>在shiro中，用户需要提供<strong>principals(身份)</strong>和<strong>credentials(证明)</strong>，使得应用程序可以识别这个用户是谁。</p>
+<ul>
+<li>principals: 身份，即主体的标识属性。可以是用户名、邮箱、手机号等。</li>
+<li>credentials: 凭证，即只有主体知道的安全值，如密码等。</li>
+</ul>
+</blockquote>
+<p><img src="https://atts.w3cschool.cn/attachments/image/wk/shiro/4.png" alt="images"></p>
+<h3 id="身份登录流程"><a href="#身份登录流程" class="headerlink" title="身份登录流程"></a>身份登录流程</h3><blockquote>
+<p>流程如下：</p>
+<ol>
+<li>调用Subject.login(token)登录，其会自动委托给SecurityManager，调用之前必须先通过SecurityUtils.setSecurityManager()设置</li>
+<li>SecurityManager负责真正的身份验证逻辑，它会委托给Authenticator进行验证</li>
+<li>Authennticator才是真正的身份验证者，Shiro中核心的身份验证入口点，此处可以自定义自己的实现</li>
+<li>Authenticator可能会委托给相应的AuthenticationStrategy进行多Realm身份验证，默认ModularRealmAuthenticator会调用AuthenticationStrategy进行多Realm身份验证</li>
+<li>Authenticator会把相应的token传入Realm，从Realm获取身份信息，如果没有抛出异常就表示身份验证失败了</li>
+</ol>
+</blockquote>
+<h3 id="Realm"><a href="#Realm" class="headerlink" title="Realm"></a>Realm</h3><blockquote>
+<p>Realm是shiro的数据源，SecurityManager从Realm中获取用户信息进行比较确定用户身份是否合法；也从Realm中得到用户的角色/权限信息，以验证用户是否有操作权限</p>
+<p>Realm源码如下：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Realm</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">getName</span><span class="params">()</span></span>; <span class="comment">// 返回唯一的realm名字</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">supports</span><span class="params">(AuthenticationToken var1)</span></span>; <span class="comment">// 判断此realm是否支持toekn</span></span><br><span class="line"></span><br><span class="line">    <span class="function">AuthenticationInfo <span class="title">getAuthenticationInfo</span><span class="params">(AuthenticationToken var1)</span> <span class="keyword">throws</span> AuthenticationException</span>; <span class="comment">// 根据token获取认证信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>shiro提供的默认Realm：</p>
+</blockquote>
+<p><img src="https://atts.w3cschool.cn/attachments/image/wk/shiro/5.png" alt="images"></p>
+<blockquote>
+<p>一般自定义实现的Realm都继承自AuthorizingRealm（授权），其继承自AuthenticatingRealm(身份验证)</p>
+<ul>
+<li>IniRealm: [users]部分指定用户名、密码、角色；[roles]部分指定权限信息（users/roles在.ini文件中配置）</li>
+<li>PropertiesRealm: user.username=password,role1,role2指定用户名、密码、角色；role.role1=permission1,permission2指定角色及权限信息</li>
+<li>JdbcRealm:通过sql查询相应的信息</li>
+</ul>
+</blockquote>
+<h2 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h2><blockquote>
+<p>授权，即访问控制，也就是在应用中控制谁能访问哪些资源。授权中涉及到的几个概念：</p>
+<ul>
+<li>主体: 访问应用的用户，在shiro中用subject表示该用户</li>
+<li>资源: 在应用中用户可以访问的任何东西，如：CRUD数据</li>
+<li>权限: 表示在应用中用户能不能访问某个资源。<strong>权限只表示有没有对某个资源操作的权力，并不表示哪出是具体哪个用户对这个资源的权力。所以后续还需要把权限赋予给用户，但这个赋予的操作需要实际运营(或其他工作人员)去配置</strong></li>
+<li>角色: 权限的集合，一般情况下会赋予用户角色而不是权限，因为每个用户大多数情况下有多个权限</li>
+</ul>
+<p>角色有分为隐式角色和显式角色：</p>
+<ul>
+<li>隐式角色: 即直接通过角色来验证用户是否有操作权限。这种是将各种角色的逻辑判断写在代码中的，要修改时只能修改代码</li>
+<li>显式角色: 即通过权限控制谁能访问某个资源。角色聚合一组权限集合，当要修改时，只需增删角色中的权限</li>
+</ul>
+</blockquote>
+<h3 id="授权方式"><a href="#授权方式" class="headerlink" title="授权方式"></a>授权方式</h3><h4 id="编程式"><a href="#编程式" class="headerlink" title="编程式"></a>编程式</h4><blockquote>
+<p>编程式即通过if/else完成授权逻辑，例：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Subject subject = SecurityUtils.getSubject();</span><br><span class="line"><span class="keyword">if</span> (subject.hasRole(<span class="string">"admin"</span>)) &#123;</span><br><span class="line">  <span class="comment">// 有admin角色的相关权限</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// 无权限</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="注解式"><a href="#注解式" class="headerlink" title="注解式"></a>注解式</h4><blockquote>
+<p>通过Java注解完成授权逻辑，例：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RequiresRoles</span>(<span class="string">"admin"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 有admin角色的权限时执行改方法，没有时则抛出异常</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="JSP-GSP标签"><a href="#JSP-GSP标签" class="headerlink" title="JSP/GSP标签"></a>JSP/GSP标签</h4><blockquote>
+<p>在JSP页面通过标签完成授权逻辑，例：</p>
+</blockquote>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;shiro:hasRole name = <span class="string">"admin"</span> &gt;</span><br><span class="line">  &lt;!- 有admin角色的权限 -&gt;</span><br><span class="line">&lt;/shiro:hasRole&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="授权流程"><a href="#授权流程" class="headerlink" title="授权流程"></a>授权流程</h3><p><img src="https://atts.w3cschool.cn/attachments/image/wk/shiro/6.png" alt="images"></p>
+<blockquote>
+<p>授权流程如下：</p>
+<ol>
+<li>首先调用Subject.isPermitted<em>/hasRole</em>接口，其会委托给SecurityManager，而SecurityManager接着会委托给Authorizer</li>
+<li>Authorizer是真正的授权者，如果我们调用如isPermitted(“user:view”)，其首先会通过PermissionResolver把字符串转成相应的Permission实例</li>
+<li>在进行授权前，会调用相应的Realm获取Subject相应的角色/权限用于匹配传入的角色/权限</li>
+<li>Authorizer会判断Realm的角色/权限是否和传入的匹配，如果有多个Realm，会委托给ModularRealmAuthorizer进行循环判断，如果匹配的如isPermitted<em>/hasRole</em>会返回true,否则返回false表示授权失败</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>ModularRealmAuthorizer进行多Realm匹配流程：</p>
+<ol>
+<li>首先检查相应的Realm是否实现了Authorizer</li>
+<li>如果实现了Authorizer，那么接着调用相应的isPermitted*/hasRole*接口进行匹配</li>
+<li>如果有一个Realm匹配那么将返回true，否则返回false</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>如果Realm进行授权的话，应该继承AuthorizingRealm，其流程是：</p>
+<ol>
+<li>如果调用hasRole*，则直接获取AuthorizationInfo.getRoles()与传入的角色比较</li>
+<li>如果调用的如isPermitted(“user:view”)，则首先通过PermissionResolver将权限字符串转成相应的Permission实例，默认使用WildcardPermissionResolver，即转成通配符的WildcardPermission；</li>
+<li>通过AuthorizationInfo.getObjectPermissions()得到Permission实例集合；通过AuthorizationInfo.getStringPermissions()得到字符串集合并通过PermissionResolver解析为Permission实例，然后获取用户的角色，并通过RolePermissionResolver解析角色对应的权限集合</li>
+<li>接着调用Permission.implies(Permission p)逐个与传入的权限比较，如果有匹配的则返回true,否则返回false</li>
+</ol>
+</blockquote>
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><h3 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h3><blockquote>
+<p>Servlet是JavaEE规范的一种，也就是servlet是规范(体现在java中就是个接口)，主要是为了扩展Java作为Web服务的功能，统一接口。</p>
+<p>其他厂商如tomcat、jetty根据serlvet规范，内部实现了servlet接口及web功能，并对外暴露出tomcat容器、jetty容器。</p>
+<p>在jetty容器监听到Web请求后，容器会根据URL信息，确定要将请求交给哪个servlet去处理，处理完后再交给容器，容器再返回给客户端。</p>
+</blockquote>
+<p><img src="https://res.cloudinary.com/djy7jydp5/image/upload/v1604246170/servlet_f1uprm.webp" alt="images"></p>
+<h3 id="Shiro的拦截器Filter"><a href="#Shiro的拦截器Filter" class="headerlink" title="Shiro的拦截器Filter"></a>Shiro的拦截器Filter</h3><blockquote>
+<p>shiro使用了和Servlet一样的Filter接口扩展，shiro拦截器基础类图如下：</p>
+</blockquote>
+<p><img src="https://atts.w3cschool.cn/attachments/image/wk/shiro/14.png" alt="images"></p>
+<blockquote>
+<ul>
+<li>NameableFilter: 给Filter起名字，默认FilterName</li>
+<li>OncePerRequestFilter: 用于防止多次执行Filter，也就是说一次请求只会走一次拦截器，另外提供一个enabled属性，表示是否开启该拦截器实例</li>
+<li>ShiroFilater: 是整个Shiro的入口，用于拦截需要安全控制的请求进行处理</li>
+<li>AdviceFilter: 提供了AOP的支持</li>
+<li>PathMatchingaFilter: 提供了基于Ant风格的请求路径匹配功能及拦截器参数解析的功能</li>
+<li>AccessControlFilter: 提供了访问控制的功能，比如是否允许访问、当访问拒绝时如何处理等等</li>
+</ul>
+</blockquote>
+<h3 id="拦截器链"><a href="#拦截器链" class="headerlink" title="拦截器链"></a>拦截器链</h3><blockquote>
+<p>shiro对servlet容器的FilterChain进行了代理，即ShiroFilter在继续Servlet容器的Filter链的执行之前，通过ProxiedFilterChain对servlet容器的FilterChain进行了代理；即先走Shiro自己的Filter体系，然后才会委托给Servlet容器的FilterChain进行Servlet容器级别的Filter链执行</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>Shiro</tag>
+        <tag>认证</tag>
+        <tag>授权</tag>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java异常</title>
+    <url>/2020/09/03/Java%E5%BC%82%E5%B8%B8/</url>
+    <content><![CDATA[<h2 id="WHAT"><a href="#WHAT" class="headerlink" title="WHAT"></a>WHAT</h2><h3 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h3><blockquote>
+<p>异常是指由于某种未预知的情况，导致程序中断运行的一种指令流，如：文件找不到、非法参数、网络超时等。为了保证程序正常运行，在设计程序时需要考虑到各种情况并正确处理这些情况</p>
+</blockquote>
+<blockquote>
+<p>异常也是一种对象，在Java中，所有异常类的基类是<code>java.lang.Throwable</code>，Java中将异常划分为两类：</p>
+<ul>
+<li>Error：表示程序中无法处理的错误，一般是指程序执行时JVM出现了错误</li>
+<li>Exception：表示程序本身由于健壮性不足导致的错误，程序本身可以捕捉到这类错误</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>Exception异常又分为两类：</p>
+<ul>
+<li>运行时异常：RuntimeException类及其子类表示JVM在运行期间可能出现的错误。这类异常处于不可查异常，一般是由程序逻辑错误引起的，在程序中可以选择捕获处理，也可以不处理</li>
+<li>编译异常：除RuntimeException及子类之外的异常。如果程序中出现了此类异常，则必须对该异常进行处理，否则编译不通过</li>
+</ul>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@startuml</span><br><span class="line">left to right direction</span><br><span class="line">Throwable &lt;|-- Error</span><br><span class="line">Throwable &lt;|-- Exception</span><br><span class="line"></span><br><span class="line">Error &lt;|-- VirtualMachineError</span><br><span class="line">VirtualMachineError &lt;|-- StackOverflowError</span><br><span class="line">Error &lt;|-- AWTError</span><br><span class="line"></span><br><span class="line">Exception &lt;|-- IOException</span><br><span class="line">Exception &lt;|-- RuntimeException</span><br><span class="line"></span><br><span class="line">IOException &lt;|-- EOFException</span><br><span class="line">IOException &lt;|-- FileNotFoundException</span><br><span class="line"></span><br><span class="line">RuntimeException &lt;|-- MissingResourceException</span><br><span class="line">RuntimeException &lt;|-- ClassNotFoundException</span><br><span class="line">RuntimeException &lt;|-- NullPointerException</span><br><span class="line">RuntimeException &lt;|-- IllegalArgumentException</span><br><span class="line">RuntimeException &lt;|-- ArrayIndexOutOfBoundsException</span><br><span class="line">RuntimeException &lt;|-- UnknownTypeException</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><blockquote>
+<p>在Java中，可通过 <strong>捕获</strong> 和 <strong>抛出</strong> 两种方式来处理异常</p>
+</blockquote>
+<h4 id="捕获异常"><a href="#捕获异常" class="headerlink" title="捕获异常"></a>捕获异常</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">  <span class="comment">// 有可能产生异常的代码</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(ExceptionClz1 e1) &#123;</span><br><span class="line">  <span class="comment">// 处理异常</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(ExceptionClz2 e2) &#123;</span><br><span class="line">  <span class="comment">// 处理异常</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  <span class="comment">// 不管是否发生异常，finally中的语句都会被执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="抛出异常"><a href="#抛出异常" class="headerlink" title="抛出异常"></a>抛出异常</h4><blockquote>
+<p>在代码中可以使用 <code>throws new ExceptionClz();</code> 的方式想调用该方法的上级方法抛出异常</p>
+</blockquote>
+<h2 id="HOW"><a href="#HOW" class="headerlink" title="HOW"></a>HOW</h2><h3 id="异常类"><a href="#异常类" class="headerlink" title="异常类"></a>异常类</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> club.hermit.study.exception;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseBusinessException</span> <span class="keyword">extends</span> <span class="title">RuntimeException</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    <span class="keyword">private</span> String msg;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BaseBusinessException</span><span class="params">(Integer code, String msg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(msg);</span><br><span class="line">        <span class="keyword">this</span>.code = code;</span><br><span class="line">        <span class="keyword">this</span>.msg = msg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCode</span><span class="params">(Integer code)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMsg</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> msg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMsg</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.msg = msg;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> club.hermit.study.exception;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Business</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        String str = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">//            str.equals("233");</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> BaseBusinessException(-<span class="number">1</span>, <span class="string">"this is baseBusiness Exception"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (BaseBusinessException e1) &#123;</span><br><span class="line">            e1.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e2) &#123;</span><br><span class="line">            e2.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">club.hermit.study.exception.BaseBusinessException: this is baseBusiness Exception</span><br><span class="line">	at club.hermit.study.exception.Business.main(Business.java:11)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><h3 id="Java-常见异常"><a href="#Java-常见异常" class="headerlink" title="Java 常见异常"></a>Java 常见异常</h3><table>
+<thead>
+<tr>
+<th>异常类</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>java.lang.NullPointerException</td>
+<td>空指针异常。当应用试图在要求使用对象的地方使用了null时，抛出该异常。譬如：调用null对象的实例方法、访问null对象的属性、计算null对象的长度、使用throw语句抛出null等等</td>
+</tr>
+<tr>
+<td>java.lang.NoSuchMethodException</td>
+<td>方法不存在异常。当访问某个类的不存在的方法时抛出该异常</td>
+</tr>
+<tr>
+<td>java.lang.NoSuchFieldException</td>
+<td>属性不存在异常。当访问某个类的不存在的属性时抛出该异常</td>
+</tr>
+<tr>
+<td>java.lang.ArrayIndexOutOfBoundsException</td>
+<td>数组索引越界异常。当对数组的索引值为负数或大于等于数组大小时抛出</td>
+</tr>
+<tr>
+<td>java.lang.ClassNotFoundException</td>
+<td>找不到类异常。当应用试图根据字符串形式的类名构造类，而在遍历CLASSPAH之后找不到对应名称的class文件时，抛出该异常</td>
+</tr>
+<tr>
+<td>java.lang.ClassCastException</td>
+<td>类造型异常。假设有类A和B（A不是B的父类或子类），O是A的实例，那么当强制将O构造为类B的实例时抛出该异常。该异常经常被称为强制类型转换异常</td>
+</tr>
+<tr>
+<td>java.lang.StackOverflowError</td>
+<td>堆栈溢出错误。当一个应用递归调用的层次太深而导致堆栈溢出或者陷入死循环时抛出该错误</td>
+</tr>
+<tr>
+<td>java.lang.OutOfMemoryError</td>
+<td>内存不足错误。当可用内存不足以让Java虚拟机分配给一个对象时抛出该错误</td>
+</tr>
+<tr>
+<td>java.lang.AbstractMethodError</td>
+<td>抽象方法错误。当应用试图调用抽象方法时抛出</td>
+</tr>
+<tr>
+<td>java.lang.AssertionError</td>
+<td>断言错，用来指示一个断言失败的情况</td>
+</tr>
+<tr>
+<td>java.lang.ClassCircularityError</td>
+<td>类循环依赖错误。在初始化一个类时，若检测到类之间循环依赖则抛出该异常</td>
+</tr>
+<tr>
+<td>java.lang.ClassFormatError</td>
+<td>类格式错误。当Java虚拟机试图从一个文件中读取Java类，而检测到该文件的内容不符合类的有效格式时抛出</td>
+</tr>
+<tr>
+<td>java.lang.ExceptionInInitializerError</td>
+<td>初始化程序错误。当执行一个类的静态初始化程序的过程中，发生了异常时抛出。静态初始化程序是指直接包含于类中的static语句段</td>
+</tr>
+<tr>
+<td>java.lang.NoClassDefFoundError</td>
+<td>未找到类定义错误。当Java虚拟机或者类装载器试图实例化某个类，而找不到该类的定义时抛出该错误</td>
+</tr>
+<tr>
+<td>java.lang.NoSuchFieldError</td>
+<td>域不存在错误。当应用试图访问或者修改某类的某个域，而该类的定义中没有该域的定义时抛出该错误</td>
+</tr>
+<tr>
+<td>java.lang.NoSuchMethodError</td>
+<td>方法不存在错误。当应用试图调用某类的某个方法，而该类的定义中没有该方法的定义时抛出该错误</td>
+</tr>
+<tr>
+<td>java.lang.ThreadDeath</td>
+<td>线程结束。当调用Thread类的stop方法时抛出该错误，用于指示线程结束</td>
+</tr>
+<tr>
+<td>java.lang.UnknownError</td>
+<td>未知错误。用于指示Java虚拟机发生了未知严重错误的情况</td>
+</tr>
+<tr>
+<td>java.lang.ArrayStoreException</td>
+<td>数组存储异常。当向数组中存放非数组声明类型对象时抛出</td>
+</tr>
+<tr>
+<td>java.lang.CloneNotSupportedException</td>
+<td>不支持克隆异常。当没有实现Cloneable接口或者不支持克隆方法时,调用其clone()方法则抛出该异常</td>
+</tr>
+<tr>
+<td>java.lang.EnumConstantNotPresentException</td>
+<td>枚举常量不存在异常。当应用试图通过名称和枚举类型访问一个枚举对象，但该枚举对象并不包含常量时，抛出该异常</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>Throwable</tag>
+        <tag>Error</tag>
+        <tag>Exception</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>函数式编程</title>
     <url>/2020/08/31/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="WHAT"><a href="#WHAT" class="headerlink" title="WHAT"></a>WHAT</h2><h3 id="函数式编程"><a href="#函数式编程" class="headerlink" title="函数式编程"></a>函数式编程</h3><blockquote>
@@ -4435,6 +4758,8 @@
 <h4 id="统计返回的HTTP状态码"><a href="#统计返回的HTTP状态码" class="headerlink" title="统计返回的HTTP状态码"></a>统计返回的HTTP状态码</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">awk <span class="string">'&#123;a[$1" "$9]++&#125; END&#123;for(v in a) print v&#125;'</span> access.log</span><br></pre></td></tr></table></figure>
 
 <h4 id="统计404次数"><a href="#统计404次数" class="headerlink" title="统计404次数"></a>统计404次数</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">awk -v CNT=0 <span class="string">'&#123;if($9==404) CNT++&#125; END&#123;print $9,CNT&#125;'</span> access.log</span><br></pre></td></tr></table></figure>
+
+<h4 id="统计占用swap内存比较多的进程ID"><a href="#统计占用swap内存比较多的进程ID" class="headerlink" title="统计占用swap内存比较多的进程ID"></a>统计占用swap内存比较多的进程ID</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># linux中的/proc/目录是linux内核提供的，在运行时访问内核内部数据结构、改变内核设置的文件系统</span></span><br><span class="line"><span class="comment"># /proc/$i/smaps 文件反应了linux运行时进程的内存情况</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> $(<span class="built_in">cd</span> /proc;ls | grep <span class="string">"^[0-9]"</span> | awk <span class="string">'$0&gt;100'</span>); <span class="keyword">do</span> awk <span class="string">'/Swap:/&#123;a=a+$2&#125;END&#123;print '</span><span class="string">"<span class="variable">$i</span>"</span><span class="string">',a/1024"M"&#125;'</span> /proc/<span class="variable">$i</span>/smaps;<span class="keyword">done</span>| sort -k2nr | head</span><br></pre></td></tr></table></figure>
 
 
 
