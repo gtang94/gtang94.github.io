@@ -1,6 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Optional</title>
+    <url>/2020/11/24/Optional/</url>
+    <content><![CDATA[<blockquote>
+<p>空指针异常是Java中最常出现的异常，JDK8中使用Optional包装对象和解决空指针异常的一系列问题</p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Optional</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Common instance for &#123;<span class="doctag">@code</span> empty()&#125;.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Optional&lt;?&gt; EMPTY = <span class="keyword">new</span> Optional&lt;&gt;();</span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * If non-null, the value; if null, indicates no value is present</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> T value;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Constructs an empty instance.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@implNote</span> Generally only one empty instance, &#123;<span class="doctag">@link</span> Optional#EMPTY&#125;,</span></span><br><span class="line"><span class="comment">     * should exist per VM.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Optional</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Constructs an instance with the value present.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value the non-null value to be present</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> NullPointerException if value is null</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Optional</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = Objects.requireNonNull(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li>该类支持泛型，其属性value可以是任意类型T</li>
+<li>该类有两个构造方法，且都是<code>private</code>，也即不能用外部构造该类的实例</li>
+</ul>
+</blockquote>
+<h2 id="Api"><a href="#Api" class="headerlink" title="Api"></a>Api</h2><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>public static&lt;T&gt; Optional&lt;T&gt; empty()</code></td>
+<td>该方法返回一个空的Optional实例，该实例的value为空</td>
+</tr>
+<tr>
+<td><code>public static &lt;T&gt; Optional&lt;T&gt; of(T value)</code></td>
+<td>根据传入的非空的value构造Optional实例</td>
+</tr>
+<tr>
+<td><code>public static &lt;T&gt; Optional&lt;T&gt; ofNullable(T value)</code></td>
+<td>根据传入的value构造Optional实例。如果传入的是非空的value，则和of(T value)一样；如果传入的是空的value，则调用empty()方法实例化Optional</td>
+</tr>
+<tr>
+<td><code>public T get()</code></td>
+<td>如果容器非空，则返回Optional的值，否则抛出NoSuchElementException异常</td>
+</tr>
+<tr>
+<td><code>public boolean isPresent()</code></td>
+<td>判断当前的Optional是否已经设置了值</td>
+</tr>
+<tr>
+<td><code>public void ifPresent(Consumer&lt;? super T&gt; consumer)</code></td>
+<td>判断当前Optional是否已设置了值，如果有值，则调用Consumer函数式接口进行处理</td>
+</tr>
+<tr>
+<td><code>public Optional&lt;T&gt; filter(Predicate&lt;? super T&gt; predicate)</code></td>
+<td>如果设置了值，且满足Predicate的判读条件，则返回该Optional，否则返回一个空的Optional</td>
+</tr>
+<tr>
+<td><code>public&lt;U&gt; Optional&lt;U&gt; map(Function&lt;? super T, ? extends U&gt; mapper)</code></td>
+<td>如果Optional设置了value，则调用Function进行处理，并返回包含处理后值的Optional，否则返回空的Optional</td>
+</tr>
+<tr>
+<td><code>public&lt;U&gt; Optional&lt;U&gt; flatMap(Function&lt;? super T, Optional&lt;U&gt;&gt; mapper)</code></td>
+<td>与map()方法类似，但他的mapper结构已经是一个Optional，不需要再对结果进行包装</td>
+</tr>
+<tr>
+<td><code>public T orElse(T other)</code></td>
+<td>如果Optional的值不为空，则返回该值，否则返回other</td>
+</tr>
+<tr>
+<td><code>public T orElseGet(Supplier&lt;? extends T&gt; other)</code></td>
+<td>如果Optional值不为空，则返回该值，否则根据other另外生成一个</td>
+</tr>
+<tr>
+<td><code>public &lt;X extends Throwable&gt; T orElseThrow(Supplier&lt;? extends X&gt; exceptionSupplier) throws X</code></td>
+<td>如果Option值不为空，则返回该值，否则通过supplier抛出一个异常</td>
+</tr>
+</tbody></table>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">JDK8之前：</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (msg != <span class="keyword">null</span>) &#123;</span><br><span class="line">		System.out.println(msg);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">JDK8:</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">  Optional.ofNullable(msg)</span><br><span class="line">    .ifPresent(System.out.println(msg))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">JDK8之前：</span><br><span class="line"><span class="keyword">if</span> ( user != <span class="keyword">null</span>) &#123;</span><br><span class="line">  doSomething(user);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">JDK8：</span><br><span class="line">Optional.ofNullable（user）</span><br><span class="line">	.ifPresent(u-&gt;&#123;</span><br><span class="line">		doSomething(u);</span><br><span class="line">	&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">JDK8之前：</span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">(User user)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (user != <span class="keyword">null</span>) &#123;</span><br><span class="line">		String name = user.getName();</span><br><span class="line">		<span class="keyword">if</span> (<span class="string">"zhangsan"</span>.equals(name)) &#123;</span><br><span class="line">			<span class="keyword">return</span> user;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		user = <span class="keyword">new</span> User();</span><br><span class="line">		user.setName(<span class="string">"zhangsan"</span>);</span><br><span class="line">		<span class="keyword">return</span> user;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">JDK8:</span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Optional.ofNullable(user)</span><br><span class="line">    .filter(u-&gt;<span class="string">"zhangsan"</span>.equals(u.getName()))</span><br><span class="line">    .orElseGet(() -&gt; &#123;</span><br><span class="line">      User user1 = <span class="keyword">new</span> User();</span><br><span class="line">      user1.setName(<span class="string">"zhangsan"</span>);</span><br><span class="line">      <span class="keyword">return</span> user1;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>源码分析</category>
+      </categories>
+      <tags>
+        <tag>JDK8</tag>
+        <tag>Optional</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Shiro</title>
     <url>/2020/11/01/Shiro/</url>
     <content><![CDATA[<h2 id="Shiro简介"><a href="#Shiro简介" class="headerlink" title="Shiro简介"></a>Shiro简介</h2><blockquote>
