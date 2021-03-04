@@ -1,6 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>GIT使用</title>
+    <url>/2021/03/04/GIT%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h2 id="ALIAS"><a href="#ALIAS" class="headerlink" title="ALIAS"></a>ALIAS</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ~/.git/config</span></span><br><span class="line">ci = commit</span><br><span class="line">st = status</span><br><span class="line">co = checkout</span><br><span class="line">br = branch</span><br><span class="line">ss = status --short</span><br><span class="line">df = diff</span><br><span class="line">lo = <span class="built_in">log</span> --oneline</span><br><span class="line">lg = <span class="built_in">log</span> --color --graph --pretty=format:<span class="string">'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset'</span> --abbrev-commit</span><br></pre></td></tr></table></figure>
+
+<h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><h3 id="常见分支"><a href="#常见分支" class="headerlink" title="常见分支"></a>常见分支</h3><p><img src="https://res.cloudinary.com/djy7jydp5/image/upload/v1614871446/74843131-c8748500-532b-11ea-9cd9-280d997a6563_uapny6.png" alt="images"></p>
+<ul>
+<li><p>master: 理论上只有一个最稳定的主分支</p>
+</li>
+<li><p>develop: 理论上只有一个待发布的开发分支</p>
+</li>
+<li><p>feature: 多个正在开发的分支</p>
+</li>
+<li><p>hotfix: </p>
+<blockquote>
+<ol>
+<li><p>一般线上bug，可在develop分支切hotFix分支进行修改，完成后合并到develop(一般是release-*)，下次版本发布时一起发布。</p>
+</li>
+<li><p>紧急线上bug，应在master分支上切hotfix分支进行修改，完成后合并到master发布</p>
+</li>
+</ol>
+</blockquote>
+</li>
+<li><p>release-*: 可能从develop分支切分而来，但一定要合并到develop和master分支上；该分支一般用来： </p>
+<blockquote>
+<ol>
+<li><p>在发布前紧急修复细小bug </p>
+</li>
+<li><p>准备要发布的版本号等数据 </p>
+</li>
+<li><p>合并细小bug</p>
+</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ol>
+<li><p><strong>合并前使用merge -no-ff 生成合并记录</strong></p>
+</li>
+<li><p><strong>分支合并前提交pull request进行code review</strong></p>
+</li>
+</ol>
+<h3 id="分支命名规范"><a href="#分支命名规范" class="headerlink" title="分支命名规范"></a>分支命名规范</h3><blockquote>
+<p>git分支分为集成分支(develop)、功能分支(feature)和修复分支(hotfix)</p>
+</blockquote>
+<h4 id="集成分支"><a href="#集成分支" class="headerlink" title="集成分支"></a>集成分支</h4><ul>
+<li><p>版本内的集成分支： feature/versions/{$version}</p>
+</li>
+<li><p>所有待发布功能的集成分支： develop</p>
+</li>
+</ul>
+<h4 id="功能分支"><a href="#功能分支" class="headerlink" title="功能分支"></a>功能分支</h4><ul>
+<li><p>版本功能分支(根据版本需求拆分的功能分支): <code>feature/{$version}/{$issue_id}_{description}</code></p>
+</li>
+<li><p>非版本功能分支(不跟版本一起上线的功能或者一些不紧急的bug): <code>feature/{$username}/{$issue_id}_{$description}</code></p>
+</li>
+</ul>
+<blockquote>
+<p><code>{$username}</code> 代表开发者，例如：tanggq<br><code>{$version}</code> 代表版本号，例如：v2.1.1<br><code>{$issue_id}</code> 代表gitee的Issue Id，例如： #ISSUE12345<br><code>{$description}</code> 代表分支功能简短描述</p>
+</blockquote>
+<h4 id="修复分支"><a href="#修复分支" class="headerlink" title="修复分支"></a>修复分支</h4><ul>
+<li>线上bug分支: <code>hotfix/{$username}/{$issue_id}_{$description}</code></li>
+</ul>
+<h2 id="提交"><a href="#提交" class="headerlink" title="提交"></a>提交</h2><h3 id="约定式提交规范"><a href="#约定式提交规范" class="headerlink" title="约定式提交规范"></a>约定式提交规范</h3><p>约定式提交规范是使用最广泛的git提交规范，源自<a href="https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines" target="_blank" rel="noopener">Angular JS</a>，提交格式如下：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">&lt;<span class="built_in">type</span>&gt;(&lt;scope&gt;): &lt;subject&gt;</span><br><span class="line">//&lt;BLANK LINE&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">//&lt;BLANK LINE&gt;</span><br><span class="line">&lt;footer&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="规范说明"><a href="#规范说明" class="headerlink" title="规范说明"></a>规范说明</h3><ol>
+<li><code>&lt;type&gt;</code> 是提交类型，必须是以下类型中的一个：</li>
+</ol>
+<ul>
+<li>feat：增加一个新功能</li>
+<li>fix：修复bug</li>
+<li>docs：只修改了文档</li>
+<li>style：做了不影响代码含义的修改，空格、格式化、缺少分号等等</li>
+<li>refactor：代码重构，既不是修复bug，也不是新功能的修改</li>
+<li>perf：改进性能的代码</li>
+<li>test：增加测试或更新已有的测试</li>
+<li>chore：构建或辅助工具或依赖库的更新</li>
+</ul>
+<ol start="2">
+<li><p><code>(&lt;scope&gt;)</code> 可选，表示影响的范围、功能、模块</p>
+</li>
+<li><p><code>&lt;subject&gt;</code> 简单说明，不超过50个字</p>
+</li>
+<li><p><code>&lt;body&gt;</code> 选填，用于填写更详细的描述，可以分成多行。 无重大变更一般不写</p>
+</li>
+<li><p><code>&lt;footer&gt;</code> 选填，用于关联issue，一般是关联issue、关闭issue</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>alias</tag>
+        <tag>branch</tag>
+        <tag>commit</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>yum update的破坏性</title>
+    <url>/2021/02/10/yum-update%E7%9A%84%E7%A0%B4%E5%8C%96%E6%80%A7/</url>
+    <content><![CDATA[<h2 id="yum"><a href="#yum" class="headerlink" title="yum"></a>yum</h2><blockquote>
+<p>yum 是一款自动化升级、安装、卸载rpm安装包的工具。 yum是使用一个中心仓库管理一部分应用程序的依赖关系，根据计算出来的依赖关系进行相关的升级、安装、更新等操作。</p>
+</blockquote>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><blockquote>
+<ul>
+<li>可以同时配置多个资源库</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>配置文件简洁（/etc/yum.conf）</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>自动化处理更新rpm包时遇到的依赖问题</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>与rpm数据库一致</li>
+</ul>
+</blockquote>
+<h2 id="yum-update的造成的影响"><a href="#yum-update的造成的影响" class="headerlink" title="yum update的造成的影响"></a>yum update的造成的影响</h2><blockquote>
+<ul>
+<li>升级内核</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>升级linux发行版本</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>升级所有包</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>改变软件设置和系统设置</li>
+</ul>
+</blockquote>
+<h2 id="避免升级影响系统"><a href="#避免升级影响系统" class="headerlink" title="避免升级影响系统"></a>避免升级影响系统</h2><h3 id="update升级系统和发行版"><a href="#update升级系统和发行版" class="headerlink" title="update升级系统和发行版"></a>update升级系统和发行版</h3><blockquote>
+<p>修改yum.conf配置文件，update时忽略内核和发行版</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># echo -e "\nexclude=kernel* \nexclude=centos-release*" &gt;&gt; /etc/yum.conf</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="对比升级前后"><a href="#对比升级前后" class="headerlink" title="对比升级前后"></a>对比升级前后</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># uname -a</span></span><br><span class="line">Linux iZm5ei1yo0mi0y72r6dyoxZ 3.10.0-1062.12.1.el7.x86_64 <span class="comment">#1 SMP Tue Feb 4 23:02:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># cat /etc/centos-release</span></span><br><span class="line">CentOS Linux release 7.6.1810 (Core) </span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># </span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># yum update</span></span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># uname -a</span></span><br><span class="line">Linux iZm5ei1yo0mi0y72r6dyoxZ 3.10.0-1062.12.1.el7.x86_64 <span class="comment">#1 SMP Tue Feb 4 23:02:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># cat /etc/centos-release</span></span><br><span class="line">CentOS Linux release 7.6.1810 (Core) </span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="upgrade升级"><a href="#upgrade升级" class="headerlink" title="upgrade升级"></a>upgrade升级</h3><blockquote>
+<p>upgrade时只升级所有包，不升级软件和系统内核</p>
+</blockquote>
+<h4 id="对比升级前后-1"><a href="#对比升级前后-1" class="headerlink" title="对比升级前后"></a>对比升级前后</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 删除/etc/yum.conf配置文件中的“exclude=kernel* exclude=centos-release*”</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># uname -a</span></span><br><span class="line">Linux iZm5ei1yo0mi0y72r6dyoxZ 3.10.0-1062.12.1.el7.x86_64 <span class="comment">#1 SMP Tue Feb 4 23:02:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># cat /etc/centos-release</span></span><br><span class="line">CentOS Linux release 7.6.1810 (Core) </span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># yum -y upgrade</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># uname -a</span></span><br><span class="line">Linux iZm5ei1yo0mi0y72r6dyoxZ 3.10.0-1062.12.1.el7.x86_64 <span class="comment">#1 SMP Tue Feb 4 23:02:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># cat /etc/centos-release</span></span><br><span class="line">CentOS Linux release 7.6.1810 (Core) </span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="误升级的回退"><a href="#误升级的回退" class="headerlink" title="误升级的回退"></a>误升级的回退</h2><h3 id="内核回退"><a href="#内核回退" class="headerlink" title="内核回退"></a>内核回退</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看当前内核版本</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># uname -r</span></span><br><span class="line">3.10.0-1062.12.1.el7.x86_64</span><br><span class="line"><span class="comment"># 查看当前内核详细信息</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># hostnamectl </span></span><br><span class="line">   Static hostname: iZm5ei1yo0mi0y72r6dyoxZ</span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: 20200220105402131453637367482142</span><br><span class="line">           Boot ID: f77698effc3d4250a195982dc8510977</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux 7 (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:7</span><br><span class="line">            Kernel: Linux 3.10.0-1062.12.1.el7.x86_64</span><br><span class="line">      Architecture: x86-64</span><br><span class="line"><span class="comment"># 查看历史内核信息</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># cat /boot/grub2/grub.cfg |grep menuentry</span></span><br><span class="line"><span class="keyword">if</span> [ x<span class="string">"<span class="variable">$&#123;feature_menuentry_id&#125;</span>"</span> = xy ]; <span class="keyword">then</span></span><br><span class="line">  menuentry_id_option=<span class="string">"--id"</span></span><br><span class="line">  menuentry_id_option=<span class="string">""</span></span><br><span class="line"><span class="built_in">export</span> menuentry_id_option</span><br><span class="line">menuentry <span class="string">'CentOS Linux (3.10.0-1160.15.2.el7.x86_64) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-3.10.0-1062.12.1.el7.x86_64-advanced-bdb48242-7da4-491c-ad1a-ae0994a965c9'</span> &#123;</span><br><span class="line">menuentry <span class="string">'CentOS Linux (3.10.0-1062.12.1.el7.x86_64) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-3.10.0-1062.12.1.el7.x86_64-advanced-bdb48242-7da4-491c-ad1a-ae0994a965c9'</span> &#123;</span><br><span class="line">menuentry <span class="string">'CentOS Linux (3.10.0-1062.el7.x86_64) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-3.10.0-1062.el7.x86_64-advanced-bdb48242-7da4-491c-ad1a-ae0994a965c9'</span> &#123;</span><br><span class="line">menuentry <span class="string">'CentOS Linux (0-rescue-20200220105402131453637367482142) 7 (Core)'</span> --class centos --class gnu-linux --class gnu --class os --unrestricted <span class="variable">$menuentry_id_option</span> <span class="string">'gnulinux-0-rescue-20200220105402131453637367482142-advanced-bdb48242-7da4-491c-ad1a-ae0994a965c9'</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前已设置的内核信息（可能未生效）</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># grub2-editenv list</span></span><br><span class="line">saved_entry=CentOS Linux (3.10.0-1062.12.1.el7.x86_64) 7 (Core)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重置内核</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># grub2-set-default "CentOS Linux (3.10.0-1160.15.2.el7.x86_64) 7 (Core)"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># reboot</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启后查看是否生效</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># uname -r</span></span><br><span class="line">3.10.0-1160.15.2.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<h3 id="发行版回退"><a href="#发行版回退" class="headerlink" title="发行版回退"></a>发行版回退</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 已存在的centos发行版的包</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># rpm -qa | grep centos-release</span></span><br><span class="line">centos-release-scl-2-3.el7.centos.noarch</span><br><span class="line">centos-release-scl-rh-2-3.el7.centos.noarch</span><br><span class="line">centos-release-7-9.2009.1.el7.centos.x86_64</span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载某版本的发行包</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># wget http://vault.centos.org/7.6.1810/os/x86_64/Packages/centos-release-7-6.1810.2.el7.centos.x86_64.rpm</span></span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制回退到某个发行版本</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># rpm -ivh centos-release-7-6.1810.2.el7.centos.x86_64.rpm --force</span></span><br><span class="line">Preparing...                          <span class="comment">################################# [100%]</span></span><br><span class="line">Updating / installing...</span><br><span class="line">   1:centos-release-7-6.1810.2.el7.cen<span class="comment">################################# [100%]</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 已存在的centos发行版的包</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># rpm -qa | grep centos-release</span></span><br><span class="line">centos-release-scl-2-3.el7.centos.noarch</span><br><span class="line">centos-release-scl-rh-2-3.el7.centos.noarch</span><br><span class="line">centos-release-7-9.2009.1.el7.centos.x86_64</span><br><span class="line">centos-release-7-6.1810.2.el7.centos.x86_64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 回退确认</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># cat /etc/centos-release</span></span><br><span class="line">CentOS Linux release 7.6.1810 (Core) </span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment"># uname -r</span></span><br><span class="line">3.10.0-1160.15.2.el7.x86_64</span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ ~]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>CentOS</tag>
+        <tag>yum update</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ant</title>
+    <url>/2021/02/08/Ant/</url>
+    <content><![CDATA[<h2 id="WHAT"><a href="#WHAT" class="headerlink" title="WHAT"></a>WHAT</h2><h3 id="Ant"><a href="#Ant" class="headerlink" title="Ant"></a>Ant</h3><blockquote>
+<p>Apache Ant 是一个Java编写的命令行工具，主要是用来驱动构建文件中的描述的进程作为彼此依赖的目标和扩展点。 Ant主要是用来构建Java应用程序，当然也可以构建C和C++程序。</p>
+</blockquote>
+<h3 id="Ant-和-Maven区别"><a href="#Ant-和-Maven区别" class="headerlink" title="Ant 和 Maven区别"></a>Ant 和 Maven区别</h3><blockquote>
+<p>Maven 是一个软件项目管理工具，基于POM(项目对象)模型的概念。 Maven可以从中央仓库获取程序依赖包，用以项目的编译、打包、发布等。 Maven有三套独立的生命周期：clean周期、default周期、site周期，clean周期又有以下阶段：pre-clean、clean、post-clean。 执行mvn clean时，必须按顺序先执行pre-clean，再执行clean</p>
+</blockquote>
+<blockquote>
+<p>Ant 没有生命周期，所有的操作都需要手动去创建、部署</p>
+</blockquote>
+<h3 id="Ant的优势"><a href="#Ant的优势" class="headerlink" title="Ant的优势"></a>Ant的优势</h3><blockquote>
+<ul>
+<li>跨平台</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>语法清晰、 使用简单（与make比，不敢和maven比）</li>
+</ul>
+</blockquote>
+<h2 id="HOW"><a href="#HOW" class="headerlink" title="HOW"></a>HOW</h2><h3 id="Ant环境配置"><a href="#Ant环境配置" class="headerlink" title="Ant环境配置"></a>Ant环境配置</h3><h4 id="JDK安装"><a href="#JDK安装" class="headerlink" title="JDK安装"></a>JDK安装</h4><blockquote>
+<p>略</p>
+</blockquote>
+<h4 id="Ant下载"><a href="#Ant下载" class="headerlink" title="Ant下载"></a>Ant下载</h4><blockquote>
+<p><a href="https://ant.apache.org/bindownload.cgi" target="_blank" rel="noopener">https://ant.apache.org/bindownload.cgi</a></p>
+</blockquote>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ /]<span class="comment"># cd /usr/local/src</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ src]<span class="comment"># mkdir /usr/local/apache</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ src]<span class="comment"># tar zxvf apache-ant-1.9.15-bin.tar.gz -C /usr/local/apache/</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ src]<span class="comment"># echo -e "\nANT_HOME=/usr/local/apache/apache-ant-1.9.15\nPATH=$&#123;ANT_HOME&#125;/bin:$PATH" &gt;&gt; /etc/profile</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ src]<span class="comment"># source /etc/profile</span></span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ src]<span class="comment"># ant -version</span></span><br><span class="line">Apache Ant(TM) version 1.9.15 compiled on May 10 2020</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h3><h4 id="创建目录"><a href="#创建目录" class="headerlink" title="创建目录"></a>创建目录</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos tmp]<span class="comment"># mkdir -p /tmp/test/src/club/hermit</span></span><br><span class="line">[root@VM-0-8-centos tmp]<span class="comment"># mkdir -p /tmp/test/classes</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="App-java-tmp-test-src-club-hermit-App-java"><a href="#App-java-tmp-test-src-club-hermit-App-java" class="headerlink" title="App.java(/tmp/test/src/club/hermit/App.java)"></a>App.java(/tmp/test/src/club/hermit/App.java)</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> club.hermit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"this is a ant build test application"</span>);</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="build-xml-tmp-test-build-xml"><a href="#build-xml-tmp-test-build-xml" class="headerlink" title="build.xml(/tmp/test/build.xml)"></a>build.xml(/tmp/test/build.xml)</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">name</span>=<span class="string">"Ant Test"</span> <span class="attr">default</span>=<span class="string">"compile"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"root"</span> <span class="attr">value</span>=<span class="string">"/tmp/test"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">target</span> <span class="attr">name</span>=<span class="string">"compile"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">delete</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">fileset</span> <span class="attr">dir</span>=<span class="string">"classes"</span> <span class="attr">includes</span>=<span class="string">"**/*.class"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">javac</span> <span class="attr">srcdir</span>=<span class="string">"src"</span> <span class="attr">destdir</span>=<span class="string">"classes"</span> <span class="attr">includeantruntime</span>=<span class="string">"false"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">target</span> <span class="attr">name</span>=<span class="string">"clean"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">delete</span> <span class="attr">dir</span>=<span class="string">"classes"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">target</span> <span class="attr">name</span>=<span class="string">"run"</span> <span class="attr">depends</span>=<span class="string">"compile"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java</span> <span class="attr">classname</span>=<span class="string">"club.hermit.App"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">classpath</span> <span class="attr">path</span>=<span class="string">"classes"</span>&gt;</span><span class="tag">&lt;/<span class="name">classpath</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">java</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="run"><a href="#run" class="headerlink" title="run"></a>run</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ <span class="built_in">test</span>]<span class="comment"># ant run</span></span><br><span class="line">Buildfile: /tmp/<span class="built_in">test</span>/build.xml</span><br><span class="line"></span><br><span class="line">compile:</span><br><span class="line">    [javac] Compiling 1 <span class="built_in">source</span> file to /tmp/<span class="built_in">test</span>/classes</span><br><span class="line"></span><br><span class="line">run:</span><br><span class="line">     [java] this is a ant build <span class="built_in">test</span> application</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line">Total time: 1 second</span><br><span class="line">[root@iZm5ei1yo0mi0y72r6dyoxZ <span class="built_in">test</span>]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><ul>
+<li><a href="https://iowiki.com/ant/ant_build_files.html" target="_blank" rel="noopener">Ant</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Apache Ant</tag>
+        <tag>编译工具</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Optional</title>
     <url>/2020/11/24/Optional/</url>
     <content><![CDATA[<blockquote>
@@ -81,6 +301,49 @@
       <tags>
         <tag>JDK8</tag>
         <tag>Optional</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nginx安装</title>
+    <url>/2020/11/21/Nginx%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h2 id="包下载-amp-依赖安装"><a href="#包下载-amp-依赖安装" class="headerlink" title="包下载&amp;依赖安装"></a>包下载&amp;依赖安装</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos ~]<span class="comment"># cd /usr/local/src/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><blockquote>
+<p><a href="https://nginx.org/en/download.html" target="_blank" rel="noopener">Nginx</a></p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos src]<span class="comment"># wget http://nginx.org/download/nginx-1.10.2.tar.gz</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="OpenSSL"><a href="#OpenSSL" class="headerlink" title="OpenSSL"></a>OpenSSL</h3><blockquote>
+<p><a href="https://www.openssl.org/" target="_blank" rel="noopener">OpenSSL</a></p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos src]<span class="comment"># wget http://www.openssl.org/source/openssl-fips-2.0.10.tar.gz</span></span><br><span class="line">[root@VM-0-8-centos src]<span class="comment"># tar zxvf openssl-fips-2.0.10.tar.gz</span></span><br><span class="line">[root@VM-0-8-centos src]<span class="comment"># cd openssl-fips-2.0.10/</span></span><br><span class="line">[root@VM-0-8-centos openssl-fips-2.0.10]<span class="comment"># ./config &amp;&amp; make &amp;&amp; make install</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="zlib"><a href="#zlib" class="headerlink" title="zlib"></a>zlib</h3><blockquote>
+<p><a href="http://www.zlib.net/" target="_blank" rel="noopener">zlib</a></p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos src]<span class="comment"># wget http://zlib.net/zlib-1.2.11.tar.gz</span></span><br><span class="line">[root@VM-0-8-centos src]<span class="comment"># tar zxvf zlib-1.2.11.tar.gz</span></span><br><span class="line">[root@VM-0-8-centos src]<span class="comment"># cd zlib-1.2.11/</span></span><br><span class="line">[root@VM-0-8-centos zlib-1.2.11]<span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="pcre"><a href="#pcre" class="headerlink" title="pcre"></a>pcre</h3><blockquote>
+<p><a href="http://www.pcre.org/" target="_blank" rel="noopener">pcre</a></p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos src]<span class="comment"># wget https://ftp.pcre.org/pub/pcre/pcre-8.40.tar.gz</span></span><br><span class="line">[root@VM-0-8-centos src]<span class="comment"># tar zxvf pcre-8.40.tar.gz</span></span><br><span class="line">[root@VM-0-8-centos src]<span class="comment"># cd pcre-8.40/</span></span><br><span class="line">[root@VM-0-8-centos pcre-8.40]<span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="C-依赖"><a href="#C-依赖" class="headerlink" title="C++依赖"></a>C++依赖</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos src]<span class="comment"># yum install gcc-c++</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h2><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos src]<span class="comment"># tar zxvf nginx-1.10.2.tar.gz</span></span><br><span class="line">[root@VM-0-8-centos src]<span class="comment"># cd nginx-1.10.2/</span></span><br><span class="line">[root@VM-0-8-centos nginx-1.10.2]<span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">[root@VM-0-8-centos sbin]<span class="comment"># /usr/local/nginx/sbin/nginx</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Nginx配置"><a href="#Nginx配置" class="headerlink" title="Nginx配置"></a>Nginx配置</h2><h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><h3 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h3>]]></content>
+      <categories>
+        <category>环境配置</category>
+      </categories>
+      <tags>
+        <tag>nginx</tag>
       </tags>
   </entry>
   <entry>
@@ -3313,7 +3576,7 @@
   <entry>
     <title>IDEA调试技巧</title>
     <url>/2020/07/01/IDEA%E8%B0%83%E8%AF%95%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<h1 id="IntelliJ-IDEA调试技巧"><a href="#IntelliJ-IDEA调试技巧" class="headerlink" title="IntelliJ IDEA调试技巧"></a>IntelliJ IDEA调试技巧</h1><blockquote>
+    <content><![CDATA[<blockquote>
 <p>本文内容转自作者光年的博客 <a href="https://www.cnblogs.com/jun1019/p/9741224.html" target="_blank" rel="noopener">你可能不知道的IDEA高级调试技巧</a></p>
 </blockquote>
 <h2 id="条件断点"><a href="#条件断点" class="headerlink" title="条件断点"></a>条件断点</h2><blockquote>
@@ -5487,38 +5750,50 @@
     <url>/2020/03/21/CSERVICE%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><h3 id="容器IP"><a href="#容器IP" class="headerlink" title="容器IP"></a>容器IP</h3><blockquote>
 <p>docker inspect 容器ID | grep IPAddr</p>
-<p>eg: <code>docker inspect 5941fb0c8204|grep IPAddr</code></p>
 </blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker inspect 5941fb0c8204|grep IPAddr</span><br></pre></td></tr></table></figure>
+
 <h3 id="宿主-容器文件拷贝"><a href="#宿主-容器文件拷贝" class="headerlink" title="宿主/容器文件拷贝"></a>宿主/容器文件拷贝</h3><h4 id="宿主机-gt-容器"><a href="#宿主机-gt-容器" class="headerlink" title="宿主机 =&gt; 容器"></a>宿主机 =&gt; 容器</h4><blockquote>
 <p>docker cp 宿主机文件目录位置 容器名称:容器目录位置</p>
 <p>eg: <code>docker cp ./test.txt cservice-kafka-1:/opt/kafka</code></p>
 </blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker cp ./test.txt cservice-kafka-1:/opt/kafka</span><br></pre></td></tr></table></figure>
+
 <h4 id="容器-gt-宿主机"><a href="#容器-gt-宿主机" class="headerlink" title="容器 =&gt; 宿主机"></a>容器 =&gt; 宿主机</h4><blockquote>
 <p>docker cp 容器名称:容器文件目录位置 宿主机文件目录位置</p>
-<p>eg: <code>docker cp cservice-kafka-1:/opt/kafka /User/tangguoqiang</code></p>
 </blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker cp cservice-kafka-1:/opt/kafka /User/tangguoqiang</span><br></pre></td></tr></table></figure>
+
 <h3 id="root用户启动容器（root用户启动后passwd修改root密码）"><a href="#root用户启动容器（root用户启动后passwd修改root密码）" class="headerlink" title="root用户启动容器（root用户启动后passwd修改root密码）"></a>root用户启动容器（root用户启动后passwd修改root密码）</h3><blockquote>
 <p>docker exec -it -u root 容器名 /bin/bash</p>
-<p>eg: <code>docker exec -it -u root cservice-jenkins-1 /bin/bash</code></p>
 </blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it -u root cservice-jenkins-1 /bin/bash</span><br></pre></td></tr></table></figure>
+
 <h3 id="查看docker启动日志"><a href="#查看docker启动日志" class="headerlink" title="查看docker启动日志"></a>查看docker启动日志</h3><blockquote>
 <p>实时加载的日志信息：docker logs -f –tail=200 容器ID</p>
-<p>eg: <code>docker logs -f --tail=200 9166c619e12f</code></p>
 </blockquote>
-<h2 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h2><h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><h3 id="Kafka-topic"><a href="#Kafka-topic" class="headerlink" title="Kafka topic"></a>Kafka topic</h3><h4 id="Kafka-topics-list"><a href="#Kafka-topics-list" class="headerlink" title="Kafka topics list"></a>Kafka topics list</h4><blockquote>
-<p>eg: <code>kafka-topics.sh --zookeeper cservice-zookeeper-1:2181 --list</code></p>
-</blockquote>
-<h4 id="Kafka-topic内容"><a href="#Kafka-topic内容" class="headerlink" title="Kafka topic内容"></a>Kafka topic内容</h4><blockquote>
-<p>eg: <code>bin/kafka-console-consumer.sh --bootstrap-server cservice-kafka-1:9092 --topic test --from-beginning</code></p>
-</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker logs -f --tail=200 9166c619e12f</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h2><h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><h3 id="Kafka-topic"><a href="#Kafka-topic" class="headerlink" title="Kafka topic"></a>Kafka topic</h3><h4 id="Kafka-topics-list"><a href="#Kafka-topics-list" class="headerlink" title="Kafka topics list"></a>Kafka topics list</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">kafka-topics.sh --zookeeper cservice-zookeeper-1:2181 --list</span><br></pre></td></tr></table></figure>
+
+<h4 id="Kafka-topic内容"><a href="#Kafka-topic内容" class="headerlink" title="Kafka topic内容"></a>Kafka topic内容</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">bin/kafka-console-consumer.sh --bootstrap-server cservice-kafka-1:9092 --topic <span class="built_in">test</span> --from-beginning</span><br></pre></td></tr></table></figure>
+
 <h3 id="Kafka-connect-启动"><a href="#Kafka-connect-启动" class="headerlink" title="Kafka connect 启动"></a>Kafka connect 启动</h3><h4 id="standalone模式"><a href="#standalone模式" class="headerlink" title="standalone模式"></a>standalone模式</h4><blockquote>
 <p>connect-standalone.sh standalone配置文件 Sources配置文件 Sink配置文件 </p>
-<p>eg: <code>bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties</code></p>
 </blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties</span><br></pre></td></tr></table></figure>
+
 <h4 id="distributed模式"><a href="#distributed模式" class="headerlink" title="distributed模式"></a>distributed模式</h4><blockquote>
 <p>connect-distributed.sh distributed配置文件</p>
-<p>eg: <code>bin/connect-distributed.sh config/connect-distributed.properties</code></p>
 </blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">bin/connect-distributed.sh config/connect-distributed.properties</span><br></pre></td></tr></table></figure>
+
+
+
+
+
 <h2 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h2><h3 id="数据备份"><a href="#数据备份" class="headerlink" title="数据备份"></a>数据备份</h3><h4 id="导入-导出-和-备份-恢复的区别"><a href="#导入-导出-和-备份-恢复的区别" class="headerlink" title="导入/导出 和 备份/恢复的区别"></a>导入/导出 和 备份/恢复的区别</h4><blockquote>
 <p>导出/导出命令：<code>mongoexport</code> / <code>mongoimport</code></p>
 <p>备份/恢复命令：<code>mongodump</code> / <code>mongorestore</code></p>
@@ -5570,20 +5845,26 @@
 <li>进入其他节点的mongo命令行，执行 <code>rs.slaveOk()</code>开始同步数据</li>
 </ol>
 </blockquote>
-<h3 id="Mongo副本集"><a href="#Mongo副本集" class="headerlink" title="Mongo副本集"></a>Mongo副本集</h3><h4 id="增加副本集"><a href="#增加副本集" class="headerlink" title="增加副本集"></a>增加副本集</h4><blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rs.add(&quot;ip:port&quot;);</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h4 id="删除副本集"><a href="#删除副本集" class="headerlink" title="删除副本集"></a>删除副本集</h4><blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rs.remove(&quot;ip:port&quot;);</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h4 id="修改conf"><a href="#修改conf" class="headerlink" title="修改conf"></a>修改conf</h4><blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cfg &#x3D; rs.conf();</span><br><span class="line">cfg.members[2].host&#x3D;[&quot;ip:port&quot;];</span><br><span class="line">rs.reconfig(cfg);</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="Zip"><a href="#Zip" class="headerlink" title="Zip"></a>Zip</h2><h3 id="压缩"><a href="#压缩" class="headerlink" title="压缩"></a>压缩</h3><blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zip -r xxx.zip .&#x2F;filename</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="解压缩"><a href="#解压缩" class="headerlink" title="解压缩"></a>解压缩</h3><blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">unzip -d .&#x2F;filedir xxx.zip</span><br></pre></td></tr></table></figure></blockquote>
+<h3 id="Mongo副本集"><a href="#Mongo副本集" class="headerlink" title="Mongo副本集"></a>Mongo副本集</h3><h4 id="增加副本集"><a href="#增加副本集" class="headerlink" title="增加副本集"></a>增加副本集</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">rs.add(<span class="string">"ip:port"</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="删除副本集"><a href="#删除副本集" class="headerlink" title="删除副本集"></a>删除副本集</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">rs.remove(<span class="string">"ip:port"</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="修改conf"><a href="#修改conf" class="headerlink" title="修改conf"></a>修改conf</h4><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">cfg = rs.conf();</span><br><span class="line">cfg.members[2].host=[<span class="string">"ip:port"</span>];</span><br><span class="line">rs.reconfig(cfg);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="打-解包"><a href="#打-解包" class="headerlink" title="打/解包"></a>打/解包</h2><h3 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 打包</span></span><br><span class="line">zip -r xxx.zip ./filename</span><br><span class="line"><span class="comment"># 解包</span></span><br><span class="line">unzip -d ./filedir xxx.zip</span><br></pre></td></tr></table></figure>
+
+<h3 id="tar"><a href="#tar" class="headerlink" title="tar"></a>tar</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 打包</span></span><br><span class="line">tar zcvf csweb.tar /usr/<span class="built_in">local</span>/src/csweb</span><br><span class="line">tar zcvf csweb.tar.gz /usr/<span class="built_in">local</span>/src/csweb</span><br><span class="line"><span class="comment"># 解包</span></span><br><span class="line">tar zxvf csweb.tar</span><br><span class="line">tar zxvf csweb.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h3 id="rar"><a href="#rar" class="headerlink" title="rar"></a>rar</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 解包</span></span><br><span class="line">unrar x Shadowsocks-4.3.2.146.rar</span><br><span class="line"><span class="comment"># 打包</span></span><br><span class="line">rar a -r Shadowsocks.rar ./Shadowsocks-4.3.2.146</span><br></pre></td></tr></table></figure>
+
+
+
 ]]></content>
       <categories>
         <category>CSERVICE</category>
