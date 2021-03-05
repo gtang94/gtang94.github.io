@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2020/10/22/RESTful%E8%AE%BE%E8%AE%A1/</loc>
+    
+    <lastmod>2021-03-05T14:08:24.405Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2020/08/30/Microsoft_REST_API%20Guidelines/</loc>
+    
+    <lastmod>2021-03-05T13:26:39.297Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2021/02/08/Ant/</loc>
     
     <lastmod>2021-03-04T15:26:28.789Z</lastmod>

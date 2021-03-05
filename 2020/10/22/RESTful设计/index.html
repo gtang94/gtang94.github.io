@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="restful,http code,rest api," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一个好的系统，即使在出错的时候，也应该是对开发人员友好的(可根据错误信息快速定位到问题)  CODE码需解决的问题  标识具体出了什么问题； 标识哪个服务&#x2F;中间件出了问题; 通过CODE码快速定位问题和解决方案； 通过CODE码前端判断显示内容;   RESTful 设计风格下的状态码 在REST的设计中，CODE码有两种设计方式：  遵循RESTful标准，使用或扩展RFC2616定义的标准H">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RESTful Code 设计">
+<meta property="og:url" content="http://yoursite.com/2020/10/22/RESTful%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="gtang94&#39;s note">
+<meta property="og:description" content="一个好的系统，即使在出错的时候，也应该是对开发人员友好的(可根据错误信息快速定位到问题)  CODE码需解决的问题  标识具体出了什么问题； 标识哪个服务&#x2F;中间件出了问题; 通过CODE码快速定位问题和解决方案； 通过CODE码前端判断显示内容;   RESTful 设计风格下的状态码 在REST的设计中，CODE码有两种设计方式：  遵循RESTful标准，使用或扩展RFC2616定义的标准H">
+<meta property="article:published_time" content="2020-10-22T09:23:03.000Z">
+<meta property="article:modified_time" content="2021-03-05T14:08:24.405Z">
+<meta property="article:author" content="gtang94">
+<meta property="article:tag" content="restful">
+<meta property="article:tag" content="http code">
+<meta property="article:tag" content="rest api">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/10/22/RESTful设计/"/>
+
+
+
+
+
+  <title>RESTful Code 设计 | gtang94's note</title>
+  
+
+
+
+
+
+
+
+
+
+	<link href='http://fonts.font.im/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="gtang94's note" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">gtang94's note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">gtang94的技术笔记</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/22/RESTful%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="gtang94">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="gtang94's note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RESTful Code 设计</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-22T17:23:03+08:00">
+                2020-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index">
+                    <span itemprop="name">架构</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>一个好的系统，即使在出错的时候，也应该是对开发人员友好的(可根据错误信息快速定位到问题)</p>
+</blockquote>
+<h2 id="CODE码需解决的问题"><a href="#CODE码需解决的问题" class="headerlink" title="CODE码需解决的问题"></a>CODE码需解决的问题</h2><blockquote>
+<ol>
+<li>标识具体出了什么问题；</li>
+<li>标识哪个服务/中间件出了问题;</li>
+<li>通过CODE码快速定位问题和解决方案；</li>
+<li>通过CODE码前端判断显示内容;</li>
+</ol>
+</blockquote>
+<h2 id="RESTful-设计风格下的状态码"><a href="#RESTful-设计风格下的状态码" class="headerlink" title="RESTful 设计风格下的状态码"></a>RESTful 设计风格下的状态码</h2><blockquote>
+<p>在REST的设计中，CODE码有两种设计方式：</p>
+<ol>
+<li>遵循RESTful标准，使用或扩展RFC2616定义的标准HTTP状态码；</li>
+<li>在ReposeBody中自定义REST CODE码；</li>
+</ol>
+<p>在知乎上有两个对REST码和HTTP码讨论的<a href="https://www.zhihu.com/question/309888255" target="_blank" rel="noopener">问题一</a>、<a href="https://www.zhihu.com/question/310737821/answer/585641618" target="_blank" rel="noopener">问题二</a></p>
+<p>在各大厂中，Google/阿里使用遵循RESTful的设计方式，腾讯系列使用自定义REST CODE的设计方式；</p>
+</blockquote>
+<h3 id="两种设计方式的原因"><a href="#两种设计方式的原因" class="headerlink" title="两种设计方式的原因"></a>两种设计方式的原因</h3><h4 id="遵循RESTful-HTTP标准"><a href="#遵循RESTful-HTTP标准" class="headerlink" title="遵循RESTful/HTTP标准"></a>遵循RESTful/HTTP标准</h4><blockquote>
+<ol>
+<li>在标准满足业务的基础上，遵守标准。 将表示‘处理状态’的字段code放在body中相当于自定义一个协议；</li>
+<li>占用端对端的数据容量；</li>
+<li>相对前端来说，HTTP本身有CODE码，BODY中再增加REST CODE增加复杂度；</li>
+</ol>
+</blockquote>
+<h4 id="自定义REST-CODE码"><a href="#自定义REST-CODE码" class="headerlink" title="自定义REST CODE码"></a>自定义REST CODE码</h4><blockquote>
+<ol>
+<li>HTTP(或RESTful)规范的设计目标是整个互联网资源，CODE码只定义了大概的方向，具体业务需要具体针对；</li>
+<li>标准HTTP CODE业务场景不足，像404，不能具体表示用户不存在或者订单不存在或者商品不存在；</li>
+<li>如果沿用CODE码，部分宽带服务商会把非200响应跳转到其他页面(可使用https解决该问题)；</li>
+</ol>
+</blockquote>
+<h2 id="遵循RESTful的设计"><a href="#遵循RESTful的设计" class="headerlink" title="遵循RESTful的设计"></a>遵循RESTful的设计</h2><blockquote>
+<ol>
+<li>自定义 <strong>错误代码-HTTP状态码</strong> 的对应关系;</li>
+<li>在各微服务的Response Data中返回 errorCode、 serviceName、 errorMessage等，具体参考附录中的结构；在gateway中屏蔽掉某些字段后返回；</li>
+</ol>
+</blockquote>
+<h2 id="REST-CODE码分类"><a href="#REST-CODE码分类" class="headerlink" title="REST CODE码分类"></a>REST CODE码分类</h2><blockquote>
+<p>系统错误(码)<br>主要指系统和操作系统交互中的错误；如socker错误、文件IO错误、申请内存错误等。<br>系统错误需要在后台日志中记录详细的错误堆栈信息。</p>
+</blockquote>
+<blockquote>
+<p>业务错误(码)<br>主要是指业务系统内部的错误；如参数不合法、登陆时用户名或密码错误、操作不符合某业务条件等。<br>业务错误不需要再后台日志中记录详细的错误堆栈信息。</p>
+</blockquote>
+<blockquote>
+<p>依赖服务错误(码)<br>主要是指业务系统依赖的基础服务发生的错误；如mongo/mysql/cache连接错误、上游服务超时或返回错误等。<br>依赖服务错误需要记录到后台日志中。</p>
+</blockquote>
+<h2 id="CSERVICE-CODE设计"><a href="#CSERVICE-CODE设计" class="headerlink" title="CSERVICE CODE设计"></a>CSERVICE CODE设计</h2><h3 id="HTTP-CODE码规划V1"><a href="#HTTP-CODE码规划V1" class="headerlink" title="HTTP CODE码规划V1"></a>HTTP CODE码规划V1</h3><table>
+<thead>
+<tr>
+<th>CODE</th>
+<th>MSG</th>
+<th>DES</th>
+<th>EMPLOY</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>100</td>
+<td>Continue</td>
+<td>服务器已经接收到请求头，并且客户端应继续发送请求主体</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>200</td>
+<td>Ok</td>
+<td>请求已成功</td>
+<td></td>
+</tr>
+<tr>
+<td>201</td>
+<td>Create</td>
+<td>请求已被实现，且有一个新的资源被依需而创建</td>
+<td></td>
+</tr>
+<tr>
+<td>202</td>
+<td>Accepted</td>
+<td>服务器已接受请求，但尚未处理。最终可能会也可能不会被处理</td>
+<td></td>
+</tr>
+<tr>
+<td>205</td>
+<td>Reset Content</td>
+<td>服务器成功处理了请求，但没有返回任何内容。改响应要求请求者重置文档视图</td>
+<td>？？？</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>301</td>
+<td>Moved Permanently</td>
+<td>永久重定向</td>
+<td></td>
+</tr>
+<tr>
+<td>302</td>
+<td>Found</td>
+<td>临时重定向</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>客户端错误，服务器不处理该请求</td>
+<td></td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>用户未认证</td>
+<td></td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>服务器已理解请求，但拒绝执行该请求。在响应实体中讲清楚为何不能被执行</td>
+<td></td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>资源未找到</td>
+<td></td>
+</tr>
+<tr>
+<td>405</td>
+<td>Method Not Allowed</td>
+<td>请求行中的请求方法不能用于请求该资源。需返回一个Allow头信息用以表示当前资源能接受的请求方法列表</td>
+<td></td>
+</tr>
+<tr>
+<td>407</td>
+<td>Proxy Authentication Required</td>
+<td>客户端必须在代理服务器上进行身份验证</td>
+<td></td>
+</tr>
+<tr>
+<td>408</td>
+<td>Request Timeout</td>
+<td>请求超时</td>
+<td></td>
+</tr>
+<tr>
+<td>410</td>
+<td>Gone</td>
+<td>请求的资源不再可用</td>
+<td></td>
+</tr>
+<tr>
+<td>413</td>
+<td>Request Entity Too Large</td>
+<td>服务器拒绝处理当前请求，因为请求提交的数据超过服务器处理范围</td>
+<td></td>
+</tr>
+<tr>
+<td>415</td>
+<td>Unsupported Media Type</td>
+<td>请求提交的媒体类型不是服务器支持的类型</td>
+<td></td>
+</tr>
+<tr>
+<td>418</td>
+<td>I’m a teapot</td>
+<td>彩蛋状态码（看以后是否能用到）</td>
+<td></td>
+</tr>
+<tr>
+<td>424</td>
+<td>Locked</td>
+<td>当前资源被锁定</td>
+<td></td>
+</tr>
+<tr>
+<td>451</td>
+<td>Unavailable For Legal Reasons</td>
+<td>法律要求而拒绝</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error</td>
+<td>通用错误，服务器遇到一个未曾预料的状况</td>
+<td></td>
+</tr>
+<tr>
+<td>501</td>
+<td>Not Implemented</td>
+<td>服务器不支持当前请求所需的某个功能</td>
+<td></td>
+</tr>
+<tr>
+<td>502</td>
+<td>Bad Gateway</td>
+<td>在网关或代理服务器请求时，上游服务器接收到无效响应</td>
+<td></td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable</td>
+<td>由于服务器临时维护或过载，服务器无法处理该请求</td>
+<td></td>
+</tr>
+<tr>
+<td>504</td>
+<td>Gateway Timeout</td>
+<td>在网关或代理服务器请求时，上游服务器超时</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="HTTP-CODE码规划V2"><a href="#HTTP-CODE码规划V2" class="headerlink" title="HTTP CODE码规划V2"></a>HTTP CODE码规划V2</h3><h4 id="错误代码说明"><a href="#错误代码说明" class="headerlink" title="错误代码说明"></a>错误代码说明</h4><blockquote>
+<p>11209</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>12</th>
+<th>09</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>系统级错误（1:系统级、2:服务级、3:其他）</td>
+<td>服务模块</td>
+<td>具体错误</td>
+</tr>
+</tbody></table>
+<h4 id="服务代码定义"><a href="#服务代码定义" class="headerlink" title="服务代码定义"></a>服务代码定义</h4><table>
+<thead>
+<tr>
+<th>服务代码</th>
+<th>DESC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10</td>
+<td>gateway_server</td>
+</tr>
+<tr>
+<td>11</td>
+<td>media_server</td>
+</tr>
+<tr>
+<td>12</td>
+<td>sms_server</td>
+</tr>
+<tr>
+<td>13</td>
+<td>order_server</td>
+</tr>
+<tr>
+<td>14</td>
+<td>ucenter_server</td>
+</tr>
+<tr>
+<td>15</td>
+<td>sso_server</td>
+</tr>
+<tr>
+<td>30</td>
+<td>mysql_server</td>
+</tr>
+<tr>
+<td>31</td>
+<td>mongo_server</td>
+</tr>
+<tr>
+<td>32</td>
+<td>redis_server</td>
+</tr>
+</tbody></table>
+<h4 id="具体错误定义"><a href="#具体错误定义" class="headerlink" title="具体错误定义"></a>具体错误定义</h4><table>
+<thead>
+<tr>
+<th>错误代码</th>
+<th>MSG</th>
+<th>DES</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>OK</td>
+<td>成功</td>
+</tr>
+<tr>
+<td>01</td>
+<td>System error</td>
+<td>系统错误</td>
+</tr>
+<tr>
+<td>02</td>
+<td>System unavailable</td>
+<td>服务暂停</td>
+</tr>
+<tr>
+<td>03</td>
+<td>Remote Service error</td>
+<td>远程服务错误</td>
+</tr>
+<tr>
+<td>04</td>
+<td>IP limit</td>
+<td>IP限制不能请求该资源</td>
+</tr>
+<tr>
+<td>05</td>
+<td>Too many pending tasks, system is busy</td>
+<td>系统繁忙</td>
+</tr>
+<tr>
+<td>06</td>
+<td>Job expired</td>
+<td>请求超时</td>
+</tr>
+<tr>
+<td>07</td>
+<td>Illegal request</td>
+<td>非法请求</td>
+</tr>
+<tr>
+<td>08</td>
+<td>Request api not found</td>
+<td>接口不存在</td>
+</tr>
+<tr>
+<td>09</td>
+<td>HTTP method is not suported for this request</td>
+<td>请求的HTTP METHOD不支持</td>
+</tr>
+<tr>
+<td>10</td>
+<td>IP requests out of rate limit</td>
+<td>IP请求次数过多</td>
+</tr>
+<tr>
+<td>11</td>
+<td>User requests out of rate limit</td>
+<td>用户请求次数过多</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Param error</td>
+<td>参数错误</td>
+</tr>
+<tr>
+<td>13</td>
+<td>REQUEST_BODY_LENGTH_OVER_LIMIT</td>
+<td>请求体过长</td>
+</tr>
+<tr>
+<td>14</td>
+<td>USER_DOES_NOT_EXISTS</td>
+<td>用户不存在</td>
+</tr>
+<tr>
+<td>15</td>
+<td>OUT_OF_LIMIT</td>
+<td>提交内容过于频繁</td>
+</tr>
+<tr>
+<td>16</td>
+<td>REPEAT_CONTENT</td>
+<td>提交相似内容</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Contain illegal website</td>
+<td>包含非法网址</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Content is illegal</td>
+<td>包含非法内容</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Your ip’s behave in a comic boisterous or unruly manner</td>
+<td>IP流量异常</td>
+</tr>
+<tr>
+<td>20</td>
+<td>sms can’t null</td>
+<td>短信验证码不能为空</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Illegal entity id</td>
+<td>不合法的实体ID</td>
+</tr>
+<tr>
+<td>22</td>
+<td>DB error</td>
+<td>DB错误</td>
+</tr>
+<tr>
+<td>23</td>
+<td>mongo error</td>
+<td>MONGO异常</td>
+</tr>
+<tr>
+<td>24</td>
+<td>redis error</td>
+<td>REDIS异常</td>
+</tr>
+<tr>
+<td>25</td>
+<td>The phone number has been used</td>
+<td>该手机号已经被使用</td>
+</tr>
+<tr>
+<td>26</td>
+<td>The account has bean bind phone</td>
+<td>该用户已绑定手机号</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Auth faild</td>
+<td>认证失败</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Username or password error</td>
+<td>用户名或密码错误</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Username and pwd auth out of rate limit</td>
+<td>用户密码超过请求限制</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Version rejected</td>
+<td>版本号错误</td>
+</tr>
+<tr>
+<td>31</td>
+<td>Token expired</td>
+<td>Token已经过期</td>
+</tr>
+<tr>
+<td>32</td>
+<td>Token revoked</td>
+<td>Token不合法</td>
+</tr>
+<tr>
+<td>33</td>
+<td>Invalid status</td>
+<td>无效状态码</td>
+</tr>
+<tr>
+<td>34</td>
+<td>BaseResCode error</td>
+<td>返回码设置异常</td>
+</tr>
+<tr>
+<td>35</td>
+<td>SMS error</td>
+<td>短信验证码错误</td>
+</tr>
+<tr>
+<td>36</td>
+<td>NOT SUPPORT LOGIN METHOD</td>
+<td>请选择验证码登录或密码登录</td>
+</tr>
+<tr>
+<td>37</td>
+<td>User has bean lock, please contact admin</td>
+<td>账号已被锁定,请联系管理员</td>
+</tr>
+<tr>
+<td>38</td>
+<td>Cap error</td>
+<td>图片验证码错误</td>
+</tr>
+<tr>
+<td>39</td>
+<td>Reference not found</td>
+<td>推荐人不存在</td>
+</tr>
+</tbody></table>
+<h4 id="错误代码对照表"><a href="#错误代码对照表" class="headerlink" title="错误代码对照表"></a>错误代码对照表</h4><h5 id="系统级错误"><a href="#系统级错误" class="headerlink" title="系统级错误"></a>系统级错误</h5><table>
+<thead>
+<tr>
+<th>CODE</th>
+<th>MSG</th>
+<th>DES</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10001</td>
+<td>System error</td>
+<td>系统错误</td>
+</tr>
+<tr>
+<td>10002</td>
+<td>System unavailable</td>
+<td>服务暂停</td>
+</tr>
+<tr>
+<td>10003</td>
+<td>Remote Service error</td>
+<td>远程服务错误</td>
+</tr>
+<tr>
+<td>10004</td>
+<td>IP limit</td>
+<td>IP限制不能请求该资源</td>
+</tr>
+<tr>
+<td>10005</td>
+<td>Param error</td>
+<td>参数错误</td>
+</tr>
+<tr>
+<td>10006</td>
+<td>Too many pending tasks, system is busy</td>
+<td>系统繁忙</td>
+</tr>
+<tr>
+<td>10007</td>
+<td>Job expired</td>
+<td>请求超时</td>
+</tr>
+<tr>
+<td>10008</td>
+<td>Illegal request</td>
+<td>非法请求</td>
+</tr>
+<tr>
+<td>10009</td>
+<td>Miss required parameter</td>
+<td>缺少必要的参数</td>
+</tr>
+<tr>
+<td>10010</td>
+<td>Request body length over limit</td>
+<td>请求体过长</td>
+</tr>
+<tr>
+<td>10011</td>
+<td>Request api not found</td>
+<td>接口不存在</td>
+</tr>
+<tr>
+<td>10012</td>
+<td>HTTP method is not suported for this request</td>
+<td>请求的HTTP METHOD不支持</td>
+</tr>
+<tr>
+<td>10013</td>
+<td>IP requests out of rate limit</td>
+<td>IP请求次数过多</td>
+</tr>
+<tr>
+<td>10014</td>
+<td>User requests out of rate limit</td>
+<td>用户请求次数过多</td>
+</tr>
+</tbody></table>
+<h5 id="服务级错误"><a href="#服务级错误" class="headerlink" title="服务级错误"></a>服务级错误</h5><table>
+<thead>
+<tr>
+<th>CODE</th>
+<th>MSG</th>
+<th>DES</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>20001</td>
+<td>System error</td>
+<td>系统错误</td>
+</tr>
+</tbody></table>
+<h2 id="HTTP标准状态码"><a href="#HTTP标准状态码" class="headerlink" title="HTTP标准状态码"></a>HTTP标准状态码</h2><blockquote>
+<p>HTTP 状态码是用来表示网页服务器超文本传输协议响应状态的3位数字代码，由RFC 2616规范定义。</p>
+<p>所有状态码的第一个数字代表了响应的五种状态之一 。</p>
+</blockquote>
+<h3 id="1xx-表示消息"><a href="#1xx-表示消息" class="headerlink" title="1xx 表示消息"></a>1xx 表示消息</h3><blockquote>
+<p>这一类型的状态码，代表请求已被接受，需要继续处理。这类响应是临时响应，只包含状态行和某些可选的响应头信息，并以空行结束。由于HTTP/1.0协议中没有定义任何1xx状态码，所以除非在某些试验条件下，服务器禁止向此类客户端发送1xx响应。这些状态码代表的响应都是信息性的，标示客户应该采取的其他行动。</p>
+</blockquote>
+<h4 id="100-Continue"><a href="#100-Continue" class="headerlink" title="100 Continue"></a>100 Continue</h4><blockquote>
+<p>服务器已经接收到请求头，并且客户端应继续发送请求主体（在需要发送身体的请求的情况下：例如，POST请求）,或者如果请求已经完成，忽略这个响应。服务器必须在请求完成后向客户端发送一个最终响应。要使服务器检查请求的头部，客户端必须在其初始请求中发送<code>Expect: 100-continue</code>作为头部，并在发送正文之前接收<code>100 Continue</code>状态代码。响应代码417期望失败表示请求不应继续。</p>
+</blockquote>
+<h4 id="101-Switching-Protocols"><a href="#101-Switching-Protocols" class="headerlink" title="101 Switching Protocols"></a>101 Switching Protocols</h4><blockquote>
+<p>服务器已经理解了客户端的请求，并将通过Upgrade消息头通知客户端采用不同的协议来完成这个请求。在发送完这个响应最后的空行后，服务器将会切换到在Upgrade消息头中定义的那些协议。</p>
+<p>只有在切换新的协议更有好处的时候才应该采取类似措施。例如，切换到新的HTTP版本（如HTTP/2）比旧版本更有优势，或者切换到一个实时且同步的协议（如WebSocket）以传送利用此类特性的资源。</p>
+</blockquote>
+<h4 id="102-Processing"><a href="#102-Processing" class="headerlink" title="102 Processing"></a>102 Processing</h4><blockquote>
+<p>WebDAV请求可能包含许多涉及文件操作的子请求，需要很长时间才能完成请求。该代码表示服务器已经收到并正在处理请求，但无响应可用。这样可以防止客户端超时，并假设请求丢失。</p>
+</blockquote>
+<h3 id="2xx-表示成功"><a href="#2xx-表示成功" class="headerlink" title="2xx 表示成功"></a>2xx 表示成功</h3><blockquote>
+<p>这一类型的状态码，代表请求已成功被服务器接收、理解、并接受。</p>
+</blockquote>
+<h4 id="200-Ok"><a href="#200-Ok" class="headerlink" title="200 Ok"></a>200 Ok</h4><blockquote>
+<p>请求已成功，请求所希望的响应头或数据体将随此响应返回。实际的响应将取决于所使用的请求方法。在GET请求中，响应将包含与请求的资源相对应的实体。在POST请求中，响应将包含描述或操作结果的实体。</p>
+</blockquote>
+<h4 id="201-Created"><a href="#201-Created" class="headerlink" title="201 Created"></a>201 Created</h4><blockquote>
+<p>请求已经被实现，而且有一个新的资源已经依据请求的需要而创建，且其URI已经随Location头信息返回。假如需要的资源无法及时创建的话，应当返回202 Accepted.</p>
+</blockquote>
+<h4 id="202-Accepted"><a href="#202-Accepted" class="headerlink" title="202 Accepted"></a>202 Accepted</h4><blockquote>
+<p>服务器已接受请求，但尚未处理。最终该请求可能会也可能不会被执行，并且可能在处理发生时被禁止。</p>
+</blockquote>
+<h4 id="203-Non-Authoritative-Information（自HTTP-1-1起）"><a href="#203-Non-Authoritative-Information（自HTTP-1-1起）" class="headerlink" title="203 Non-Authoritative Information（自HTTP / 1.1起）"></a>203 Non-Authoritative Information（自HTTP / 1.1起）</h4><blockquote>
+<p>服务器是一个转换代理服务器（transforming proxy，例如网络加速器），以<code>200 OK</code>状态码为起源，但回应了原始响应的修改版本。</p>
+</blockquote>
+<h4 id="204-No-Content"><a href="#204-No-Content" class="headerlink" title="204 No Content"></a>204 No Content</h4><blockquote>
+<p>服务器成功处理了请求，没有返回任何内容。在强制门户功能中，Wifi设备连接到需要进行Web认证的Wifi接入点时，通过访问一个能生成HTTP 204响应的的网站，如果能正常收到204响应，则代表无需Web认证，否则会弹出网页浏览器界面，显示出Web网页认证界面用于让用户认证登录。</p>
+</blockquote>
+<h4 id="205-Reset-Content"><a href="#205-Reset-Content" class="headerlink" title="205 Reset Content"></a>205 Reset Content</h4><blockquote>
+<p>服务器成功处理了请求，但没有返回任何内容。与204响应不同，此响应要求请求者重置文档视图。</p>
+</blockquote>
+<h4 id="206-Partial-Content"><a href="#206-Partial-Content" class="headerlink" title="206 Partial Content"></a>206 Partial Content</h4><blockquote>
+<p>服务器已经成功处理了部分GET请求。类似于FlashGet或者迅雷这类的HTTP下载工具都是使用此类响应实现断点续传或者将一个大文档分解为多个下载段同时下载。</p>
+</blockquote>
+<h4 id="207-Multi-Status"><a href="#207-Multi-Status" class="headerlink" title="207 Multi-Status"></a>207 Multi-Status</h4><blockquote>
+<p>代表之后的消息体将是一个XML消息，并且可能依照之前子请求数量的不同，包含一系列独立的响应代码。</p>
+</blockquote>
+<h4 id="208-Already-Reported"><a href="#208-Already-Reported" class="headerlink" title="208 Already Reported"></a>208 <strong>Already Reported</strong></h4><blockquote>
+<p>DAV绑定的成员已经在（多状态）响应之前的部分被列举，且未被再次包含。</p>
+</blockquote>
+<h4 id="226-IM-Used"><a href="#226-IM-Used" class="headerlink" title="226 IM Used"></a>226 <strong>IM Used</strong></h4><blockquote>
+<p>服务器已经满足了对资源的请求，对实体请求的一个或多个实体操作的结果表示。</p>
+</blockquote>
+<h3 id="3xx-表示重定向"><a href="#3xx-表示重定向" class="headerlink" title="3xx 表示重定向"></a>3xx 表示重定向</h3><blockquote>
+<p>这类状态码代表需要客户端采取进一步的操作才能完成请求。通常，这些状态码用来重定向，后续的请求地址（重定向目标）在本次响应的Location域中指明。</p>
+<p>当且仅当后续的请求所使用的方法是GET或者HEAD时，用户浏览器才可以在没有用户介入的情况下自动提交所需要的后续请求。客户端应当自动监测无限循环重定向（例如：A→B→C→……→A或A→A），因为这会导致服务器和客户端大量不必要的资源消耗。按照HTTP/1.0版规范的建议，浏览器不应自动访问超过5次的重定向。</p>
+</blockquote>
+<h4 id="300-Multiple-Choices"><a href="#300-Multiple-Choices" class="headerlink" title="300 Multiple Choices"></a>300 Multiple Choices</h4><blockquote>
+<p>被请求的资源有一系列可供选择的回馈信息，每个都有自己特定的地址和浏览器驱动的商议信息。用户或浏览器能够自行选择一个首选的地址进行重定向。</p>
+<p>除非这是一个HEAD请求，否则该响应应当包括一个资源特性及地址的列表的实体，以便用户或浏览器从中选择最合适的重定向地址。这个实体的格式由Content-Type定义的格式所决定。浏览器可能根据响应的格式以及浏览器自身能力，自动作出最合适的选择。当然，RFC 2616规范并没有规定这样的自动选择该如何进行。</p>
+<p>如果服务器本身已经有了首选的回馈选择，那么在Location中应当指明这个回馈的URI；浏览器可能会将这个Location值作为自动重定向的地址。此外，除非额外指定，否则这个响应也是可缓存的。</p>
+</blockquote>
+<h4 id="301-Moved-Permanently"><a href="#301-Moved-Permanently" class="headerlink" title="301 Moved Permanently"></a>301 Moved Permanently</h4><blockquote>
+<p>被请求的资源已永久移动到新位置，并且将来任何对此资源的引用都应该使用本响应返回的若干个URI之一。如果可能，拥有链接编辑功能的客户端应当自动把请求的地址修改为从服务器反馈回来的地址。除非额外指定，否则这个响应也是可缓存的。</p>
+<p>新的永久性的URI应当在响应的Location域中返回。除非这是一个HEAD请求，否则响应的实体中应当包含指向新的URI的超链接及简短说明。</p>
+<p>如果这不是一个GET或者HEAD请求，那么浏览器禁止自动进行重定向，除非得到用户的确认，因为请求的条件可能因此发生变化。</p>
+<p>注意：对于某些使用HTTP/1.0协议的浏览器，当它们发送的POST请求得到了一个301响应的话，接下来的重定向请求将会变成GET方式。</p>
+</blockquote>
+<h4 id="302-Found"><a href="#302-Found" class="headerlink" title="302 Found"></a>302 Found</h4><blockquote>
+<p>要求客户端执行临时重定向（原始描述短语为“Moved Temporarily”）。由于这样的重定向是临时的，客户端应当继续向原有地址发送以后的请求。只有在Cache-Control或Expires中进行了指定的情况下，这个响应才是可缓存的。</p>
+<p>新的临时性的URI应当在响应的Location域中返回。除非这是一个HEAD请求，否则响应的实体中应当包含指向新的URI的超链接及简短说明。</p>
+<p>如果这不是一个GET或者HEAD请求，那么浏览器禁止自动进行重定向，除非得到用户的确认，因为请求的条件可能因此发生变化。</p>
+<p>注意：虽然RFC 1945和RFC 2068规范不允许客户端在重定向时改变请求的方法，但是很多现存的浏览器将302响应视作为，并且使用GET方式访问在Location中规定的URI，而无视原先请求的方法。因此状态码303和被添加了进来，用以明确服务器期待客户端进行何种反应。</p>
+</blockquote>
+<h4 id="303-See-Other"><a href="#303-See-Other" class="headerlink" title="303 See Other"></a>303 See Other</h4><blockquote>
+<p>对应当前请求的响应可以在另一个URI上被找到，当响应于POST（或PUT / DELETE）接收到响应时，客户端应该假定服务器已经收到数据，并且应该使用单独的GET消息发出重定向。这个方法的存在主要是为了允许由脚本激活的POST请求输出重定向到一个新的资源。这个新的URI不是原始资源的替代引用。同时，303响应禁止被缓存。当然，第二个请求（重定向）可能被缓存。</p>
+<p>新的URI应当在响应的Location域中返回。除非这是一个HEAD请求，否则响应的实体中应当包含指向新的URI的超链接及简短说明。</p>
+<p>注意：许多HTTP/1.1版以前的浏览器不能正确理解303状态。如果需要考虑与这些浏览器之间的互动，应该可以胜任，因为大多数的浏览器处理302响应时的方式恰恰就是上述规范要求客户端处理303响应时应当做的。</p>
+</blockquote>
+<h4 id="304-Not-Modified"><a href="#304-Not-Modified" class="headerlink" title="304 Not Modified"></a>304 Not Modified</h4><blockquote>
+<p>表示资源在由请求头中的If-Modified-Since或If-None-Match参数指定的这一版本之后，未曾被修改。在这种情况下，由于客户端仍然具有以前下载的副本，因此不需要重新传输资源。</p>
+</blockquote>
+<h4 id="305-Use-Proxy"><a href="#305-Use-Proxy" class="headerlink" title="305 Use Proxy"></a>305 Use Proxy</h4><blockquote>
+<p>被请求的资源必须通过指定的代理才能被访问。Location域中将给出指定的代理所在的URI信息，接收者需要重复发送一个单独的请求，通过这个代理才能访问相应资源。只有原始服务器才能创建305响应。许多HTTP客户端（像是Mozilla和Internet Explorer）都没有正确处理这种状态代码的响应，主要是出于安全考虑。</p>
+<p>注意：RFC 2068中没有明确305响应是为了重定向一个单独的请求，而且只能被原始服务器创建。忽视这些限制可能导致严重的安全后果。</p>
+</blockquote>
+<h4 id="306-Switch-Proxy"><a href="#306-Switch-Proxy" class="headerlink" title="306 Switch Proxy"></a>306 Switch Proxy</h4><blockquote>
+<p>在最新版的规范中，306状态码已经不再被使用。最初是指“后续请求应使用指定的代理”。</p>
+</blockquote>
+<h4 id="307-Temporary-Redirect"><a href="#307-Temporary-Redirect" class="headerlink" title="307 Temporary Redirect"></a>307 Temporary Redirect</h4><blockquote>
+<p>在这种情况下，请求应该与另一个URI重复，但后续的请求应仍使用原始的URI。 与302相反，当重新发出原始请求时，不允许更改请求方法。 例如，应该使用另一个POST请求来重复POST请求。</p>
+</blockquote>
+<h4 id="308-Permanent-Redirect"><a href="#308-Permanent-Redirect" class="headerlink" title="308 Permanent Redirect"></a>308 Permanent Redirect</h4><blockquote>
+<p>请求和所有将来的请求应该使用另一个URI重复。 307和308重复302和301的行为，但不允许HTTP方法更改。 例如，将表单提交给永久重定向的资源可能会顺利进行。</p>
+</blockquote>
+<h3 id="4xx-表示客户端错误"><a href="#4xx-表示客户端错误" class="headerlink" title="4xx 表示客户端错误"></a>4xx 表示客户端错误</h3><blockquote>
+<p>这类的状态码代表了客户端看起来可能发生了错误，妨碍了服务器的处理。除非响应的是一个HEAD请求，否则服务器就应该返回一个解释当前错误状况的实体，以及这是临时的还是永久性的状况。这些状态码适用于任何请求方法。浏览器应当向用户显示任何包含在此类错误响应中的实体内容。</p>
+<p>如果错误发生时客户端正在传送数据，那么使用TCP的服务器实现应当仔细确保在关闭客户端与服务器之间的连接之前，客户端已经收到了包含错误信息的数据包。如果客户端在收到错误信息后继续向服务器发送数据，服务器的TCP栈将向客户端发送一个重置数据包，以清除该客户端所有还未识别的输入缓冲，以免这些数据被服务器上的应用程序读取并干扰后者。</p>
+</blockquote>
+<h4 id="400-Bad-Request"><a href="#400-Bad-Request" class="headerlink" title="400 Bad Request"></a>400 Bad Request</h4><blockquote>
+<p>由于明显的客户端错误（例如，格式错误的请求语法，太大的大小，无效的请求消息或欺骗性路由请求），服务器不能或不会处理该请求。</p>
+</blockquote>
+<h4 id="401-Unauthorized"><a href="#401-Unauthorized" class="headerlink" title="401 Unauthorized"></a>401 Unauthorized</h4><blockquote>
+<p>类似于403 Forbidden，401语义即“未认证”，即用户没有必要的凭据。该状态码表示当前请求需要用户验证。该响应必须包含一个适用于被请求资源的WWW-Authenticate信息头用以询问用户信息。客户端可以重复提交一个包含恰当的Authorization头信息的请求。如果当前请求已经包含了Authorization证书，那么401响应代表着服务器验证已经拒绝了那些证书。如果401响应包含了与前一个响应相同的身份验证询问，且浏览器已经至少尝试了一次验证，那么浏览器应当向用户展示响应中包含的实体信息，因为这个实体信息中可能包含了相关诊断信息。</p>
+<p>注意：当网站（通常是网站域名）禁止IP地址时，有些网站状态码显示的401，表示该特定地址被拒绝访问网站。</p>
+</blockquote>
+<h4 id="402-Payment-Required"><a href="#402-Payment-Required" class="headerlink" title="402 Payment Required"></a>402 Payment Required</h4><blockquote>
+<p>该状态码是为了将来可能的需求而预留的。该状态码最初的意图可能被用作某种形式的数字现金或在线支付方案的一部分，但几乎没有哪家服务商使用，而且这个状态码通常不被使用。如果特定开发人员已超过请求的每日限制，Google Developers API会使用此状态码。</p>
+</blockquote>
+<h4 id="403-Forbidden"><a href="#403-Forbidden" class="headerlink" title="403 Forbidden"></a>403 Forbidden</h4><blockquote>
+<p>服务器已经理解请求，但是拒绝执行它。与401响应不同的是，身份验证并不能提供任何帮助，而且这个请求也不应该被重复提交。如果这不是一个HEAD请求，而且服务器希望能够讲清楚为何请求不能被执行，那么就应该在实体内描述拒绝的原因。当然服务器也可以返回一个404响应，假如它不希望让客户端获得任何信息。</p>
+</blockquote>
+<h4 id="404-Not-Found"><a href="#404-Not-Found" class="headerlink" title="404 Not Found"></a>404 Not Found</h4><blockquote>
+<p>请求失败，请求所希望得到的资源未被在服务器上发现，但允许用户的后续请求。没有信息能够告诉用户这个状况到底是暂时的还是永久的。假如服务器知道情况的话，应当使用410状态码来告知旧资源因为某些内部的配置机制问题，已经永久的不可用，而且没有任何可以跳转的地址。404这个状态码被广泛应用于当服务器不想揭示到底为何请求被拒绝或者没有其他适合的响应可用的情况下。</p>
+</blockquote>
+<blockquote>
+<p>请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体，该请求不可接受。</p>
+<p>除非这是一个HEAD请求，否则该响应就应当返回一个包含可以让用户或者浏览器从中选择最合适的实体特性以及地址栏表的实体。实体的格式由Content-Type头中定义的媒体类型决定。浏览器可以根据格式及自身能力自行作出最佳选择。但是，规范中并没有定义任何作出此类自动选择的标准。</p>
+</blockquote>
+<h4 id="405-Method-Not-Allowed"><a href="#405-Method-Not-Allowed" class="headerlink" title="405 Method Not Allowed"></a>405 Method Not Allowed</h4><blockquote>
+<p>请求行中指定的请求方法不能被用于请求相应的资源。该响应必须返回一个Allow头信息用以表示出当前资源能够接受的请求方法的列表。例如，需要通过POST呈现数据的表单上的GET请求，或只读资源上的PUT请求。</p>
+<p>鉴于PUT，DELETE方法会对服务器上的资源进行写操作，因而绝大部分的网页服务器都不支持或者在默认配置下不允许上述请求方法，对于此类请求均会返回405错误。</p>
+</blockquote>
+<h4 id="406-Not-Acceptable"><a href="#406-Not-Acceptable" class="headerlink" title="406 Not Acceptable"></a>406 Not Acceptable</h4><blockquote>
+<p>请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体，该请求不可接受。</p>
+<p>除非这是一个HEAD请求，否则该响应就应当返回一个包含可以让用户或者浏览器从中选择最合适的实体特性以及地址栏表的实体。实体的格式由Content-Type头中定义的媒体类型决定。浏览器可以根据格式及自身能力自行作出最佳选择。但是，规范中并没有定义任何作出此类自动选择的标准。</p>
+</blockquote>
+<h4 id="407-Proxy-Authentication-Required"><a href="#407-Proxy-Authentication-Required" class="headerlink" title="407 Proxy Authentication Required"></a>407 Proxy Authentication Required</h4><blockquote>
+<p>与401响应类似，只不过客户端必须在代理服务器上进行身份验证。代理服务器必须返回一个Proxy-Authenticate用以进行身份询问。客户端可以返回一个Proxy-Authorization信息头用以验证。</p>
+</blockquote>
+<h4 id="408-Request-Timeout"><a href="#408-Request-Timeout" class="headerlink" title="408 Request Timeout"></a>408 Request Timeout</h4><blockquote>
+<p>请求超时。根据HTTP规范，客户端没有在服务器预备等待的时间内完成一个请求的发送，客户端可以随时再次提交这一请求而无需进行任何更改。</p>
+</blockquote>
+<h4 id="409-Conflict"><a href="#409-Conflict" class="headerlink" title="409 Conflict"></a>409 Conflict</h4><blockquote>
+<p>表示因为请求存在冲突无法处理该请求，例如多个同步更新之间的编辑冲突。</p>
+</blockquote>
+<h4 id="410-Gone"><a href="#410-Gone" class="headerlink" title="410 Gone"></a>410 Gone</h4><blockquote>
+<p>表示所请求的资源不再可用，将不再可用。当资源被有意地删除并且资源应被清除时，应该使用这个。在收到410状态码后，用户应停止再次请求资源。但大多数服务端不会使用此状态码，而是直接使用404状态码。</p>
+</blockquote>
+<h4 id="411-Length-Required"><a href="#411-Length-Required" class="headerlink" title="411 Length Required"></a>411 Length Required</h4><blockquote>
+<p>服务器拒绝在没有定义Content-Length头的情况下接受请求。在添加了表明请求消息体长度的有效Content-Length头之后，客户端可以再次提交该请求。</p>
+</blockquote>
+<h4 id="412-Precondition-Failed"><a href="#412-Precondition-Failed" class="headerlink" title="412 Precondition Failed"></a>412 Precondition Failed</h4><blockquote>
+<p>服务器在验证在请求的头字段中给出先决条件时，没能满足其中的一个或多个。这个状态码允许客户端在获取资源时在请求的元信息（请求头字段数据）中设置先决条件，以此避免该请求方法被应用到其希望的内容以外的资源上。</p>
+</blockquote>
+<h4 id="413-Request-Entity-Too-Large"><a href="#413-Request-Entity-Too-Large" class="headerlink" title="413 Request Entity Too Large"></a>413 Request Entity Too Large</h4><blockquote>
+<p>前称“Request Entity Too Large”，表示服务器拒绝处理当前请求，因为该请求提交的实体数据大小超过了服务器愿意或者能够处理的范围。此种情况下，服务器可以关闭连接以免客户端继续发送此请求。</p>
+<p>如果这个状况是临时的，服务器应当返回一个Retry-After的响应头，以告知客户端可以在多少时间以后重新尝试。</p>
+</blockquote>
+<h4 id="414-Request-URI-Too-Long"><a href="#414-Request-URI-Too-Long" class="headerlink" title="414 Request-URI Too Long"></a>414 Request-URI Too Long</h4><blockquote>
+<p>前称“Request-URI Too Long”，表示请求的URI长度超过了服务器能够解释的长度，因此服务器拒绝对该请求提供服务。通常将太多数据的结果编码为GET请求的查询字符串，在这种情况下，应将其转换为POST请求。这比较少见，通常的情况包括：</p>
+</blockquote>
+<h4 id="415-Unsupported-Media-Type"><a href="#415-Unsupported-Media-Type" class="headerlink" title="415 Unsupported Media Type"></a>415 Unsupported Media Type</h4><blockquote>
+<p>对于当前请求的方法和所请求的资源，请求中提交的互联网媒体类型并不是服务器中所支持的格式，因此请求被拒绝。例如，客户端将图像上传格式为svg，但服务器要求图像使用上传格式为jpg。</p>
+</blockquote>
+<h4 id="416-Requested-Range-Not-Satisfiable"><a href="#416-Requested-Range-Not-Satisfiable" class="headerlink" title="416 Requested Range Not Satisfiable"></a>416 Requested Range Not Satisfiable</h4><blockquote>
+<p>前称“Requested Range Not Satisfiable”。客户端已经要求文件的一部分（Byte serving），但服务器不能提供该部分。例如，如果客户端要求文件的一部分超出文件尾端。</p>
+</blockquote>
+<h4 id="417-Expectation-Failed"><a href="#417-Expectation-Failed" class="headerlink" title="417 Expectation Failed"></a>417 Expectation Failed</h4><blockquote>
+<p>在请求头Expect中指定的预期内容无法被服务器满足，或者这个服务器是一个代理服显的证据证明在当前路由的下一个节点上，Expect的内容无法被满足。</p>
+</blockquote>
+<h4 id="418-I’m-a-teapot"><a href="#418-I’m-a-teapot" class="headerlink" title="418 I’m a teapot"></a>418 I’m a teapot</h4><blockquote>
+<p>本操作码是在1998年作为IETF的传统愚人节笑话, 在RFC 2324超文本咖啡壶控制协议’中定义的，并不需要在真实的HTTP服务器中定义。当一个控制茶壶的HTCPCP收到BREW或POST指令要求其煮咖啡时应当回传此错误。这个HTTP状态码在某些网站（包括Google.com）与项目（如Node.js、ASP.NET和Go语言）中用作彩蛋。</p>
+</blockquote>
+<h4 id="422-Misdirected-Request"><a href="#422-Misdirected-Request" class="headerlink" title="422 Misdirected Request"></a>422 Misdirected Request</h4><blockquote>
+<p>该请求针对的是无法产生响应的服务器（例如因为连接重用）。</p>
+</blockquote>
+<h4 id="423-Unprocessable-Entity"><a href="#423-Unprocessable-Entity" class="headerlink" title="423 Unprocessable Entity"></a>423 Unprocessable Entity</h4><blockquote>
+<p>请求格式正确，但是由于含有语义错误，无法响应。</p>
+</blockquote>
+<h4 id="424-Locked"><a href="#424-Locked" class="headerlink" title="424 Locked"></a>424 Locked</h4><blockquote>
+<p>当前资源被锁定。</p>
+</blockquote>
+<h4 id="425-Failed-Dependency"><a href="#425-Failed-Dependency" class="headerlink" title="425 Failed Dependency"></a>425 Failed Dependency</h4><blockquote>
+<p>由于之前的某个请求发生的错误，导致当前请求失败，例如PROPPATCH。</p>
+</blockquote>
+<h4 id="426-Too-Early"><a href="#426-Too-Early" class="headerlink" title="426 Too Early"></a>426 Too Early</h4><blockquote>
+<p>服务器拒绝处理在Early Data中的请求，以规避可能的重放攻击。</p>
+</blockquote>
+<h4 id="427-Upgrade-Required"><a href="#427-Upgrade-Required" class="headerlink" title="427 Upgrade Required"></a>427 Upgrade Required</h4><blockquote>
+<p>客户端应切换到Upgrade头字段中给出的不同协议，如TLS/1.0。</p>
+</blockquote>
+<h4 id="428-Precondition-Required"><a href="#428-Precondition-Required" class="headerlink" title="428 Precondition Required"></a>428 Precondition Required</h4><blockquote>
+<p>原服务器要求该请求满足一定条件。这是为了防止“未更新”问题，即客户端读取（GET）一个资源的状态，更改它，并将它写（PUT）回服务器，但这期间第三方已经在服务器上更改了该资源的状态，因此导致了冲突。”</p>
+</blockquote>
+<h4 id="429-Too-Many-Requests"><a href="#429-Too-Many-Requests" class="headerlink" title="429 Too Many Requests"></a>429 Too Many Requests</h4><blockquote>
+<p>用户在给定的时间内发送了太多的请求。旨在用于网络限速。</p>
+</blockquote>
+<h4 id="431-Request-Header-Fields-Too-Large"><a href="#431-Request-Header-Fields-Too-Large" class="headerlink" title="431 Request Header Fields Too Large"></a>431 Request Header Fields Too Large</h4><blockquote>
+<p>服务器不愿处理请求，因为一个或多个头字段过大。</p>
+</blockquote>
+<h4 id="451-Unavailable-For-Legal-Reasons"><a href="#451-Unavailable-For-Legal-Reasons" class="headerlink" title="451 Unavailable For Legal Reasons"></a>451 Unavailable For Legal Reasons</h4><blockquote>
+<p>该访问因法律的要求而被拒绝，由IETF在2015核准后新增加。</p>
+</blockquote>
+<h3 id="5xx-表示服务器错误"><a href="#5xx-表示服务器错误" class="headerlink" title="5xx 表示服务器错误"></a>5xx 表示服务器错误</h3><blockquote>
+<p>表示服务器无法完成明显有效的请求。这类状态码代表了服务器在处理请求的过程中有错误或者异常状态发生，也有可能是服务器意识到以当前的软硬件资源无法完成对请求的处理。除非这是一个HEAD请求，否则服务器应当包含一个解释当前错误状态以及这个状况是临时的还是永久的解释信息实体。浏览器应当向用户展示任何在当前响应中被包含的实体。这些状态码适用于任何响应方法。</p>
+</blockquote>
+<h4 id="500-Internal-Server-Error"><a href="#500-Internal-Server-Error" class="headerlink" title="500 Internal Server Error"></a>500 Internal Server Error</h4><blockquote>
+<p>通用错误消息，服务器遇到了一个未曾预料的状况，导致了它无法完成对请求的处理。没有给出具体错误信息。</p>
+</blockquote>
+<h4 id="501-Not-Implemented"><a href="#501-Not-Implemented" class="headerlink" title="501 Not Implemented"></a>501 Not Implemented</h4><blockquote>
+<p>服务器不支持当前请求所需要的某个功能。当服务器无法识别请求的方法，并且无法支持其对任何资源的请求。（例如，网络服务API的新功能）</p>
+</blockquote>
+<h4 id="502-Bad-Gateway"><a href="#502-Bad-Gateway" class="headerlink" title="502 Bad Gateway"></a>502 Bad Gateway</h4><blockquote>
+<p>作为网关或者代理工作的服务器尝试执行请求时，从上游服务器接收到无效的响应。</p>
+</blockquote>
+<h4 id="503-Service-Unavailable"><a href="#503-Service-Unavailable" class="headerlink" title="503 Service Unavailable"></a>503 Service Unavailable</h4><blockquote>
+<p>由于临时的服务器维护或者过载，服务器当前无法处理请求。这个状况是暂时的，并且将在一段时间以后恢复。如果能够预计延迟时间，那么响应中可以包含一个Retry-After头用以标明这个延迟时间。如果没有给出这个Retry-After信息，那么客户端应当以处理500响应的方式处理它。</p>
+</blockquote>
+<h4 id="504-Gateway-Timeout"><a href="#504-Gateway-Timeout" class="headerlink" title="504 Gateway Timeout"></a>504 Gateway Timeout</h4><blockquote>
+<p>作为网关或者代理工作的服务器尝试执行请求时，未能及时从上游服务器（URI标识出的服务器，例如HTTP、FTP、LDAP）或者辅助服务器（例如DNS）收到响应。</p>
+<p>注意：某些代理服务器在DNS查询超时时会返回400或者500错误。</p>
+</blockquote>
+<h4 id="505-HTTP-Version-Not-Supported"><a href="#505-HTTP-Version-Not-Supported" class="headerlink" title="505 HTTP Version Not Supported"></a>505 HTTP Version Not Supported</h4><blockquote>
+<p>服务器不支持，或者拒绝支持在请求中使用的HTTP版本。这暗示着服务器不能或不愿使用与客户端相同的版本。响应中应当包含一个描述了为何版本不被支持以及服务器支持哪些协议的实体。</p>
+</blockquote>
+<h4 id="506-Variant-Also-Negotiates"><a href="#506-Variant-Also-Negotiates" class="headerlink" title="506 Variant Also Negotiates"></a>506 Variant Also Negotiates</h4><blockquote>
+<p>由《透明内容协商协议》（RFC 2295）扩展，代表服务器存在内部配置错误，被请求的协商变元资源被配置为在透明内容协商中使用自己，因此在一个协商处理中不是一个合适的重点。</p>
+</blockquote>
+<h4 id="507-Insufficient-Storage"><a href="#507-Insufficient-Storage" class="headerlink" title="507 Insufficient Storage"></a>507 Insufficient Storage</h4><blockquote>
+<p>服务器无法存储完成请求所必须的内容。这个状况被认为是临时的。</p>
+</blockquote>
+<h4 id="508-Loop-Detected"><a href="#508-Loop-Detected" class="headerlink" title="508  Loop Detected"></a>508  Loop Detected</h4><blockquote>
+<p>服务器在处理请求时陷入死循环。 （可代替 208状态码）</p>
+</blockquote>
+<h4 id="510-Not-Extended"><a href="#510-Not-Extended" class="headerlink" title="510 Not Extended"></a>510 Not Extended</h4><blockquote>
+<p>获取资源所需要的策略并没有被满足。</p>
+</blockquote>
+<h4 id="511-Network-Authentication-Required"><a href="#511-Network-Authentication-Required" class="headerlink" title="511 Network Authentication Required"></a>511 Network Authentication Required</h4><blockquote>
+<p>客户端需要进行身份验证才能获得网络访问权限，旨在限制用户群访问特定网络。（例如连接WiFi热点时的强制网络门户）</p>
+</blockquote>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><h3 id="RFC-2616"><a href="#RFC-2616" class="headerlink" title="RFC 2616"></a><a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="noopener">RFC 2616</a></h3><h3 id="腾讯开放平台API"><a href="#腾讯开放平台API" class="headerlink" title="腾讯开放平台API"></a><a href="https://wiki.open.qq.com/wiki/v3/user/is_area_login" target="_blank" rel="noopener">腾讯开放平台API</a></h3><h3 id="Google-RESTful文档"><a href="#Google-RESTful文档" class="headerlink" title="Google RESTful文档"></a><a href="https://www.googleapis.com/discovery/v1/apis" target="_blank" rel="noopener">Google RESTful文档</a></h3><h3 id="阿里云开发者平台"><a href="#阿里云开发者平台" class="headerlink" title="阿里云开发者平台"></a><a href="https://developer.aliyun.com/api" target="_blank" rel="noopener">阿里云开发者平台</a></h3><h3 id="GitHub-API"><a href="#GitHub-API" class="headerlink" title="GitHub API"></a><a href="https://api.github.com/" target="_blank" rel="noopener">GitHub API</a></h3><h3 id="IM开发文档"><a href="#IM开发文档" class="headerlink" title="IM开发文档"></a><a href="http://docs-im.easemob.com/start/450errorcode/10restapierrorcode" target="_blank" rel="noopener">IM开发文档</a></h3><h3 id="ERROR错误设计参考"><a href="#ERROR错误设计参考" class="headerlink" title="ERROR错误设计参考"></a><a href="https://xargin.com/error-design/" target="_blank" rel="noopener">ERROR错误设计参考</a></h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/restful/" rel="tag"># restful</a>
+          
+            <a href="/tags/http-code/" rel="tag"># http code</a>
+          
+            <a href="/tags/rest-api/" rel="tag"># rest api</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/03/Java%E5%BC%82%E5%B8%B8/" rel="next" title="Java异常">
+                <i class="fa fa-chevron-left"></i> Java异常
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/11/01/Shiro/" rel="prev" title="Shiro">
+                Shiro <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpeg"
+                alt="gtang94" />
+            
+              <p class="site-author-name" itemprop="name">gtang94</p>
+              <p class="site-description motion-element" itemprop="description">Make things as simple as possible, but no simpler</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">90</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/gtang94" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:gtang94@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-users"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.baidu.com/" title="百度" target="_blank">百度</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CODE码需解决的问题"><span class="nav-number">1.</span> <span class="nav-text">CODE码需解决的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RESTful-设计风格下的状态码"><span class="nav-number">2.</span> <span class="nav-text">RESTful 设计风格下的状态码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#两种设计方式的原因"><span class="nav-number">2.1.</span> <span class="nav-text">两种设计方式的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#遵循RESTful-HTTP标准"><span class="nav-number">2.1.1.</span> <span class="nav-text">遵循RESTful&#x2F;HTTP标准</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义REST-CODE码"><span class="nav-number">2.1.2.</span> <span class="nav-text">自定义REST CODE码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遵循RESTful的设计"><span class="nav-number">3.</span> <span class="nav-text">遵循RESTful的设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REST-CODE码分类"><span class="nav-number">4.</span> <span class="nav-text">REST CODE码分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSERVICE-CODE设计"><span class="nav-number">5.</span> <span class="nav-text">CSERVICE CODE设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-CODE码规划V1"><span class="nav-number">5.1.</span> <span class="nav-text">HTTP CODE码规划V1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-CODE码规划V2"><span class="nav-number">5.2.</span> <span class="nav-text">HTTP CODE码规划V2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#错误代码说明"><span class="nav-number">5.2.1.</span> <span class="nav-text">错误代码说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#服务代码定义"><span class="nav-number">5.2.2.</span> <span class="nav-text">服务代码定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体错误定义"><span class="nav-number">5.2.3.</span> <span class="nav-text">具体错误定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#错误代码对照表"><span class="nav-number">5.2.4.</span> <span class="nav-text">错误代码对照表</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#系统级错误"><span class="nav-number">5.2.4.1.</span> <span class="nav-text">系统级错误</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#服务级错误"><span class="nav-number">5.2.4.2.</span> <span class="nav-text">服务级错误</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP标准状态码"><span class="nav-number">6.</span> <span class="nav-text">HTTP标准状态码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1xx-表示消息"><span class="nav-number">6.1.</span> <span class="nav-text">1xx 表示消息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#100-Continue"><span class="nav-number">6.1.1.</span> <span class="nav-text">100 Continue</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#101-Switching-Protocols"><span class="nav-number">6.1.2.</span> <span class="nav-text">101 Switching Protocols</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#102-Processing"><span class="nav-number">6.1.3.</span> <span class="nav-text">102 Processing</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2xx-表示成功"><span class="nav-number">6.2.</span> <span class="nav-text">2xx 表示成功</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#200-Ok"><span class="nav-number">6.2.1.</span> <span class="nav-text">200 Ok</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#201-Created"><span class="nav-number">6.2.2.</span> <span class="nav-text">201 Created</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#202-Accepted"><span class="nav-number">6.2.3.</span> <span class="nav-text">202 Accepted</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#203-Non-Authoritative-Information（自HTTP-1-1起）"><span class="nav-number">6.2.4.</span> <span class="nav-text">203 Non-Authoritative Information（自HTTP &#x2F; 1.1起）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#204-No-Content"><span class="nav-number">6.2.5.</span> <span class="nav-text">204 No Content</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#205-Reset-Content"><span class="nav-number">6.2.6.</span> <span class="nav-text">205 Reset Content</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#206-Partial-Content"><span class="nav-number">6.2.7.</span> <span class="nav-text">206 Partial Content</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#207-Multi-Status"><span class="nav-number">6.2.8.</span> <span class="nav-text">207 Multi-Status</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#208-Already-Reported"><span class="nav-number">6.2.9.</span> <span class="nav-text">208 Already Reported</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#226-IM-Used"><span class="nav-number">6.2.10.</span> <span class="nav-text">226 IM Used</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3xx-表示重定向"><span class="nav-number">6.3.</span> <span class="nav-text">3xx 表示重定向</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#300-Multiple-Choices"><span class="nav-number">6.3.1.</span> <span class="nav-text">300 Multiple Choices</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#301-Moved-Permanently"><span class="nav-number">6.3.2.</span> <span class="nav-text">301 Moved Permanently</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#302-Found"><span class="nav-number">6.3.3.</span> <span class="nav-text">302 Found</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#303-See-Other"><span class="nav-number">6.3.4.</span> <span class="nav-text">303 See Other</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#304-Not-Modified"><span class="nav-number">6.3.5.</span> <span class="nav-text">304 Not Modified</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#305-Use-Proxy"><span class="nav-number">6.3.6.</span> <span class="nav-text">305 Use Proxy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#306-Switch-Proxy"><span class="nav-number">6.3.7.</span> <span class="nav-text">306 Switch Proxy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#307-Temporary-Redirect"><span class="nav-number">6.3.8.</span> <span class="nav-text">307 Temporary Redirect</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#308-Permanent-Redirect"><span class="nav-number">6.3.9.</span> <span class="nav-text">308 Permanent Redirect</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4xx-表示客户端错误"><span class="nav-number">6.4.</span> <span class="nav-text">4xx 表示客户端错误</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#400-Bad-Request"><span class="nav-number">6.4.1.</span> <span class="nav-text">400 Bad Request</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#401-Unauthorized"><span class="nav-number">6.4.2.</span> <span class="nav-text">401 Unauthorized</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#402-Payment-Required"><span class="nav-number">6.4.3.</span> <span class="nav-text">402 Payment Required</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#403-Forbidden"><span class="nav-number">6.4.4.</span> <span class="nav-text">403 Forbidden</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#404-Not-Found"><span class="nav-number">6.4.5.</span> <span class="nav-text">404 Not Found</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#405-Method-Not-Allowed"><span class="nav-number">6.4.6.</span> <span class="nav-text">405 Method Not Allowed</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#406-Not-Acceptable"><span class="nav-number">6.4.7.</span> <span class="nav-text">406 Not Acceptable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#407-Proxy-Authentication-Required"><span class="nav-number">6.4.8.</span> <span class="nav-text">407 Proxy Authentication Required</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#408-Request-Timeout"><span class="nav-number">6.4.9.</span> <span class="nav-text">408 Request Timeout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#409-Conflict"><span class="nav-number">6.4.10.</span> <span class="nav-text">409 Conflict</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#410-Gone"><span class="nav-number">6.4.11.</span> <span class="nav-text">410 Gone</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#411-Length-Required"><span class="nav-number">6.4.12.</span> <span class="nav-text">411 Length Required</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#412-Precondition-Failed"><span class="nav-number">6.4.13.</span> <span class="nav-text">412 Precondition Failed</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#413-Request-Entity-Too-Large"><span class="nav-number">6.4.14.</span> <span class="nav-text">413 Request Entity Too Large</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#414-Request-URI-Too-Long"><span class="nav-number">6.4.15.</span> <span class="nav-text">414 Request-URI Too Long</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#415-Unsupported-Media-Type"><span class="nav-number">6.4.16.</span> <span class="nav-text">415 Unsupported Media Type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#416-Requested-Range-Not-Satisfiable"><span class="nav-number">6.4.17.</span> <span class="nav-text">416 Requested Range Not Satisfiable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#417-Expectation-Failed"><span class="nav-number">6.4.18.</span> <span class="nav-text">417 Expectation Failed</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#418-I’m-a-teapot"><span class="nav-number">6.4.19.</span> <span class="nav-text">418 I’m a teapot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#422-Misdirected-Request"><span class="nav-number">6.4.20.</span> <span class="nav-text">422 Misdirected Request</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#423-Unprocessable-Entity"><span class="nav-number">6.4.21.</span> <span class="nav-text">423 Unprocessable Entity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#424-Locked"><span class="nav-number">6.4.22.</span> <span class="nav-text">424 Locked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#425-Failed-Dependency"><span class="nav-number">6.4.23.</span> <span class="nav-text">425 Failed Dependency</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#426-Too-Early"><span class="nav-number">6.4.24.</span> <span class="nav-text">426 Too Early</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#427-Upgrade-Required"><span class="nav-number">6.4.25.</span> <span class="nav-text">427 Upgrade Required</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#428-Precondition-Required"><span class="nav-number">6.4.26.</span> <span class="nav-text">428 Precondition Required</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#429-Too-Many-Requests"><span class="nav-number">6.4.27.</span> <span class="nav-text">429 Too Many Requests</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#431-Request-Header-Fields-Too-Large"><span class="nav-number">6.4.28.</span> <span class="nav-text">431 Request Header Fields Too Large</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#451-Unavailable-For-Legal-Reasons"><span class="nav-number">6.4.29.</span> <span class="nav-text">451 Unavailable For Legal Reasons</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5xx-表示服务器错误"><span class="nav-number">6.5.</span> <span class="nav-text">5xx 表示服务器错误</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#500-Internal-Server-Error"><span class="nav-number">6.5.1.</span> <span class="nav-text">500 Internal Server Error</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#501-Not-Implemented"><span class="nav-number">6.5.2.</span> <span class="nav-text">501 Not Implemented</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#502-Bad-Gateway"><span class="nav-number">6.5.3.</span> <span class="nav-text">502 Bad Gateway</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#503-Service-Unavailable"><span class="nav-number">6.5.4.</span> <span class="nav-text">503 Service Unavailable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#504-Gateway-Timeout"><span class="nav-number">6.5.5.</span> <span class="nav-text">504 Gateway Timeout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#505-HTTP-Version-Not-Supported"><span class="nav-number">6.5.6.</span> <span class="nav-text">505 HTTP Version Not Supported</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#506-Variant-Also-Negotiates"><span class="nav-number">6.5.7.</span> <span class="nav-text">506 Variant Also Negotiates</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#507-Insufficient-Storage"><span class="nav-number">6.5.8.</span> <span class="nav-text">507 Insufficient Storage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#508-Loop-Detected"><span class="nav-number">6.5.9.</span> <span class="nav-text">508  Loop Detected</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#510-Not-Extended"><span class="nav-number">6.5.10.</span> <span class="nav-text">510 Not Extended</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#511-Network-Authentication-Required"><span class="nav-number">6.5.11.</span> <span class="nav-text">511 Network Authentication Required</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附录"><span class="nav-number">7.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RFC-2616"><span class="nav-number">7.1.</span> <span class="nav-text">RFC 2616</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#腾讯开放平台API"><span class="nav-number">7.2.</span> <span class="nav-text">腾讯开放平台API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Google-RESTful文档"><span class="nav-number">7.3.</span> <span class="nav-text">Google RESTful文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#阿里云开发者平台"><span class="nav-number">7.4.</span> <span class="nav-text">阿里云开发者平台</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GitHub-API"><span class="nav-number">7.5.</span> <span class="nav-text">GitHub API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IM开发文档"><span class="nav-number">7.6.</span> <span class="nav-text">IM开发文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ERROR错误设计参考"><span class="nav-number">7.7.</span> <span class="nav-text">ERROR错误设计参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gtang94</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
